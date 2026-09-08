@@ -1,42 +1,44 @@
-# Features
+> 🌐 本文档由 [axios/axios](https://github.com/axios/axios) 翻译,英文原版见原项目。
 
-axios is a powerful HTTP client that provides a simple and easy-to-use API for making HTTP requests. It supports all modern browsers and is widely used in the JavaScript community. Here are some of the features that make axios a great choice for your next project.
+# 特性
 
-## Isomorphic
+axios 是一个强大的 HTTP 客户端,为发送 HTTP 请求提供了简单易用的 API。它支持所有现代浏览器,在 JavaScript 社区中被广泛使用。以下这些特性让 axios 成为你的下一个项目的绝佳选择。
 
-axios is a universal HTTP client that can be used in both the browser and Node.js. This means you can use axios to make API requests from your frontend code as well as your backend code. This makes axios a great choice for building progressive web apps, single-page applications, and server-side rendered applications.
+## 同构(Isomorphic)
 
-axios is also a great choice for teams that work on both frontend and backend code. By using axios for both frontend and backend code, you can have a consistent API for making HTTP requests, which can help reduce the complexity of your codebase.
+axios 是一个通用 HTTP 客户端,既能在浏览器中使用,也能在 Node.js 中使用。这意味着无论前端代码还是后端代码,都可以用 axios 发起 API 请求。因此 axios 非常适合构建渐进式 Web 应用、单页应用(SSPA)以及服务端渲染应用。
 
-## Fetch support <Badge type="tip" text="New" />
+对于同时负责前端和后端的团队,axios 也是很好的选择:前后端统一使用 axios 发起 HTTP 请求,可以获得一致的 API 体验,有助于降低代码库的复杂度。
 
-axios provides first class support for the Fetch API, which is a modern replacement for the XHR API. The adapter is optional and can be used through configuration. The same API is maintained for both the XHR and Fetch adapters, which makes it easy to adopt the Fetch API in your codebase without changing your existing code.
+## Fetch 支持 <Badge type="tip" text="New" />
 
-## Browser support
+axios 对 Fetch API 提供一等公民支持。Fetch API 是 XHR API 的现代替代方案。该适配器是可选的,可通过配置启用。XHR 与 Fetch 两个适配器保持相同的 API,因此你无需修改现有代码即可轻松在代码库中采用 Fetch API。
 
-axios supports all modern and select older browsers, including Chrome, Firefox, Safari, and Edge. axios is a great choice for building web applications that need to support a wide range of browsers.
+## 浏览器支持
 
-## Node.js support
+axios 支持所有现代浏览器及部分旧版浏览器,包括 Chrome、Firefox、Safari 和 Edge。对于需要兼容广泛浏览器的 Web 应用,axios 是很好的选择。
 
-axios also supports a wide range Node.js versions with tested compatibility as far back as v12.x, making it a good choice in environments where upgrading to the latest Node.js version might not be possible or practical.
+## Node.js 支持
 
-In addition to Node.js, axios has Bun and Deno smoke tests that validate key runtime behavior and improve confidence in cross-runtime compatibility.
+axios 还支持多种 Node.js 版本,经过测试可兼容到 v12.x,因此在无法或不宜升级到最新 Node.js 版本的环境中也是不错的选择。
 
-## Additional features
+除 Node.js 外,axios 还有 Bun 和 Deno 冒烟测试,用于验证关键运行时行为,增强跨运行时兼容性的信心。
 
-- Supports the Promise API
-- Intercept request and response
-- Transform request and response data
-- Abort controller
-- Timeouts
-- Query parameters serialization with support for nested entries
-- Automatic request body serialization to:
-  - JSON (application/json)
-  - Multipart / FormData (multipart/form-data)
-  - URL encoded form (application/x-www-form-urlencoded)
-- Posting HTML forms as JSON
-- Automatic JSON data handling in response
-- Progress capturing for browsers and node.js with extra info (speed rate, remaining time)
-- Setting bandwidth limits for node.js
-- Compatible with spec-compliant FormData and Blob (including node.js)
-- Client side support for protecting against XSRF
+## 更多特性
+
+- 支持 Promise API
+- 拦截请求与响应
+- 转换请求数据与响应数据
+- 支持 AbortController 取消
+- 超时控制
+- 查询参数序列化,支持嵌套条目
+- 自动将请求体序列化为:
+  - JSON(application/json)
+  - Multipart / FormData(multipart/form-data)
+  - URL 编码表单(application/x-www-form-urlencoded)
+- 将 HTML 表单以 JSON 提交
+- 自动处理响应中的 JSON 数据
+- 在浏览器和 Node.js 中捕获进度,并提供额外信息(速率、剩余时间)
+- 支持 Node.js 带宽限制
+- 兼容符合规范的 FormData 与 Blob(包括 Node.js)
+- 客户端 XSRF 防护

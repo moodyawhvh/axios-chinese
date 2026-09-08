@@ -1,26 +1,28 @@
-# JavaScript examples
+> 🌐 本文档由 [axios/axios](https://github.com/axios/axios) 翻译,英文原版见原项目。
 
-## Importing the library
+# JavaScript 示例
 
-To import the library in a CommonJS environment, you can use the `require` function, or the `import` statement if you are using a bundler like Webpack or Rollup.
+## 引入库
 
-#### No bundler
+在 CommonJS 环境中,你可以使用 `require` 函数引入库;如果使用 Webpack 或 Rollup 等打包器,则可以使用 `import` 语句。
+
+#### 无打包器
 
 ```js
 const axios = require("axios");
 ```
 
-#### With bundler (webpack, rollup, vite, etc)
+#### 使用打包器(webpack、rollup、vite 等)
 
 ```js
 import axios from "axios";
 ```
 
-## Using then/catch/finally
+## 使用 then/catch/finally
 
-Since axios returns a promise at it's core you can choose to use callbacks with `then`, `catch`, and `finally` to handle your response data, errors, and completion.
+axios 的核心返回的是 Promise,你可以选择使用 `then`、`catch` 和 `finally` 回调来处理响应数据、错误和完成状态。
 
-### Get request
+### Get 请求
 
 ```js
 axios
@@ -40,7 +42,7 @@ axios
   });
 ```
 
-### Post request
+### Post 请求
 
 ```js
 axios
@@ -60,7 +62,7 @@ axios
   });
 ```
 
-### Put request
+### Put 请求
 
 ```js
 axios
@@ -80,7 +82,7 @@ axios
   });
 ```
 
-### Patch request
+### Patch 请求
 
 ```js
 axios
@@ -98,7 +100,7 @@ axios
   });
 ```
 
-### Delete request
+### Delete 请求
 
 ```js
 axios
@@ -114,15 +116,15 @@ axios
   });
 ```
 
-## Using async/await
+## 使用 async/await
 
-Another way to handle promises is by using `async` and `await`. This allows you to use try/catch/finally blocks to handle errors and completion. This can make your code more readable and easier to understand, this also helps prevents so called callback hell.
+另一种处理 Promise 的方式是使用 `async` 和 `await`。这样可以使用 try/catch/finally 块来处理错误和完成状态,让代码更易读、更容易理解,也有助于避免所谓的"回调地狱"。
 
 ::: tip
-Note: async/await is part of ECMAScript 2017 and is not supported in Internet Explorer and older browsers, so use with caution.
+注意:async/await 是 ECMAScript 2017 的一部分,Internet Explorer 及更旧的浏览器不支持,请谨慎使用。
 :::
 
-### Get request
+### Get 请求
 
 ```js
 const getPosts = async () => {
@@ -144,7 +146,7 @@ const getPosts = async () => {
 };
 ```
 
-### Post request
+### Post 请求
 
 ```js
 const createPost = async () => {
@@ -166,7 +168,7 @@ const createPost = async () => {
 };
 ```
 
-### Put request
+### Put 请求
 
 ```js
 const updatePost = async () => {
@@ -188,7 +190,7 @@ const updatePost = async () => {
 };
 ```
 
-### Patch request
+### Patch 请求
 
 ```js
 const updatePost = async () => {
@@ -208,7 +210,7 @@ const updatePost = async () => {
 };
 ```
 
-### Delete request
+### Delete 请求
 
 ```js
 const deletePost = async () => {
