@@ -1,38 +1,40 @@
-# Code of conduct
+> 🌐 本文档由 [axios/axios](https://github.com/axios/axios) 翻译,英文原版见原项目。
 
-## Our pledge
+# 行为准则
 
-Contributors and community members commit to a welcoming, safe, and harassment-free environment for everyone.
-We welcome people regardless of age, body size, disability, ethnicity, gender identity or expression, experience level, education, nationality, race, religion, sexual orientation, or any other personal characteristic.
+## 我们的承诺
 
-## Our standards
+贡献者与社区成员共同承诺:为所有人营造一个友好、安全、免于骚扰的环境。
+无论年龄、体型、残障状况、族裔、性别认同或表达、经验水平、教育程度、国籍、种族、宗教、性取向或其他任何个人特征,我们都一视同仁地欢迎。
 
-Examples of positive behavior include:
+## 行为标准
 
-- Showing empathy and kindness toward others
-- Being respectful of different opinions and experiences
-- Accepting constructive feedback and learning from it
-- Taking responsibility for mistakes and offering sincere apologies
+积极行为的示例包括:
 
-Unacceptable behaviors include:
+- 对他人展现同理心与善意
+- 尊重不同的观点和经历
+- 接受建设性反馈并从中学习
+- 为自己的错误承担责任并真诚道歉
 
-- Sexualized language, imagery, or unwanted advances
-- Personal attacks, trolling, or insulting comments
-- Publishing private information (such as email or address) without permission
-- Any other conduct that would be considered inappropriate in a professional setting
+不可接受的行为包括:
 
-## Enforcement
+- 性化语言、图像或不受欢迎的性骚扰举动
+- 人身攻击、挑衅钓鱼或侮辱性言论
+- 未经允许公开他人隐私信息(如邮箱或住址)
+- 其他任何在专业场合会被视为不当的行为
 
-Report unacceptable behavior to the maintainers at [jasonsaayman@gmail.com](mailto:jasonsaayman@gmail.com).
-Maintainers will review reports promptly and handle them confidentially.
+## 执行
 
-## Enforcement guidelines
+如遇不可接受的行为,请向维护者报告:[jasonsaayman@gmail.com](mailto:jasonsaayman@gmail.com)。
+维护者会及时审查报告,并对处理过程保密。
 
-1. Correction: a private warning and an explanation of why the behavior was inappropriate.
-2. Warning: a clear warning with consequences for continued behavior.
-3. Temporary ban: a temporary ban for repeated or severe violations.
-4. Permanent ban: permanent removal for repeated harassment or sustained inappropriate conduct.
+## 执行准则
+
+1. 警告纠正:私下提醒,并说明该行为为何不当。
+2. 正式警告:明确警告,并说明继续此类行为的后果。
+3. 临时封禁:对重复或严重违规行为实施临时封禁。
+4. 永久封禁:对反复骚扰或持续不当行为实施永久除名。
 
 ---
 
-_This code of conduct is adapted from the [Contributor Covenant, version 2.1](https://www.contributor-covenant.org/version/2/1/code_of_conduct.html)._
+_本行为准则改编自 [Contributor Covenant 2.1 版](https://www.contributor-covenant.org/version/2/1/code_of_conduct.html)。_

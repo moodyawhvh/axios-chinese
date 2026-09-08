@@ -1,72 +1,74 @@
-# Interceptors
+> 🌐 本文档由 [axios/axios](https://github.com/axios/axios) 翻译,英文原版见原项目。
 
-Interceptors are a powerful mechanism that can be used to intercept and modify HTTP requests and responses. They are very similar to middleware in Express.js. The interceptor is a function that gets executed before a request is sent and before a response is received. Interceptors are useful for a variety of tasks such as logging, modifying request headers, and modifying the response.
+# 拦截器
 
-Basic usage of interceptors is as follows:
+拦截器是一种强大的机制,用于拦截并修改 HTTP 请求和响应,与 Express.js 中的中间件非常相似。拦截器是一个函数,在请求发出之前和响应到达之后执行。它适用于多种场景,例如记录日志、修改请求头、修改响应等。
+
+拦截器的基本用法如下:
 
 ```js
-// Add a request interceptor
+// 添加请求拦截器
 axios.interceptors.request.use(
   function (config) {
-    // Do something before request is sent
+    // 在请求发出前做些处理
     return config;
   },
   function (error) {
-    // Do something with request error
+    // 对请求错误做些处理
     return Promise.reject(error);
   }
 );
 
-// Add a response interceptor
+// 添加响应拦截器
 axios.interceptors.response.use(
   function (response) {
-    // Any status code that lie within the range of 2xx cause this function to trigger
-    // Do something with response data
+    // 2xx 范围内的状态码都会触发该函数
+    // 对响应数据做些处理
     return response;
   },
   function (error) {
-    // Any status codes that falls outside the range of 2xx cause this function to trigger
-    // Do something with response error
+    // 超出 2xx 范围的状态码都会触发该函数
+    // 对响应错误做些处理
     return Promise.reject(error);
   }
 );
 ```
 
-## Removing Interceptors
+## 移除拦截器
 
-You can remove any interceptor by using the `eject` method on the interceptor you want to remove. You can also remove all interceptors by calling the `clear` method on the `axios.interceptors` object. Here is an example of how to remove an interceptor:
+可以在要移除的拦截器上调用 `eject` 方法来移除它,也可以调用 `axios.interceptors` 对象上的 `clear` 方法移除全部拦截器。下面是移除拦截器的示例:
 
 ```js
-// Eject the request interceptor
+// 移除请求拦截器
 const myInterceptor = axios.interceptors.request.use(function () {
   /*...*/
 });
 axios.interceptors.request.eject(myInterceptor);
 
-// Eject the response interceptor
+// 移除响应拦截器
 const myInterceptor = axios.interceptors.response.use(function () {
   /*...*/
 });
 axios.interceptors.response.eject(myInterceptor);
 ```
 
-Here is an example of how to remove all interceptors:
+下面是移除全部拦截器的示例:
 
 ```js
 const instance = axios.create();
 instance.interceptors.request.use(function () {
   /*...*/
 });
-instance.interceptors.request.clear(); // Removes interceptors from requests
+instance.interceptors.request.clear(); // 移除请求拦截器
 instance.interceptors.response.use(function () {
   /*...*/
 });
-instance.interceptors.response.clear(); // Removes interceptors from responses
+instance.interceptors.response.clear(); // 移除响应拦截器
 ```
 
-## Interceptors default behaviour
+## 拦截器的默认行为
 
-When you add request interceptors, they are presumed to be asynchronous by default. This can cause a delay in the execution of your axios request when the main thread is blocked (a promise is created under the hood for the interceptor and your request gets put on the bottom of the call stack). If your request interceptors are synchronous you can add a flag to the options object that will tell axios to run the code synchronously and avoid any delays in request execution.
+添加请求拦截器时,默认假定它是异步的。当主线程被阻塞时,这会导致 axios 请求的执行出现延迟(拦截器底层会创建 Promise,请求会被压到调用栈底部)。如果你的请求拦截器是同步的,可以在 options 对象上加一个标志,告诉 axios 同步执行这段代码,避免请求执行的延迟。
 
 ```js
 axios.interceptors.request.use(
@@ -79,13 +81,13 @@ axios.interceptors.request.use(
 );
 ```
 
-### Synchronous interceptor errors
+### 同步拦截器的错误
 
-When a synchronous request interceptor throws, axios calls that interceptor's paired `onRejected` handler and stops running the remaining request interceptors. If the handler returns normally—including returning `undefined` or a fulfilled Promise—the error is handled and axios dispatches with the last valid config. The handler's return value does not replace that config.
+当同步请求拦截器抛出异常时,axios 会调用该拦截器配对的 `onRejected` 处理器,并停止执行其余请求拦截器。如果该处理器正常返回——包括返回 `undefined` 或已 fulfilled 的 Promise——错误即被视为已处理,axios 会使用最后一个有效配置派发请求;处理器的返回值不会替换该配置。
 
-To prevent dispatch, omit the rejection handler or have it throw or return a rejected Promise. The terminal error then continues through response rejection interceptors.
+若要阻止请求派发,请省略 rejection 处理器,或让它抛出异常/返回 rejected Promise。此时终结性错误会继续进入响应 rejection 拦截器。
 
-Use a rejected Promise when validation must block the request:
+当校验必须阻断请求时,使用 rejected Promise:
 
 ```js
 axios.interceptors.request.use(
@@ -102,7 +104,7 @@ axios.interceptors.request.use(
 );
 ```
 
-A logging-only rejection handler can return normally to retain the existing continuation behavior:
+仅用于记录日志的 rejection 处理器可以正常返回,以保留现有的继续执行行为:
 
 ```js
 axios.interceptors.request.use(
@@ -111,15 +113,15 @@ axios.interceptors.request.use(
   },
   function logPreparationFailure(error) {
     console.warn(error);
-    // Returning normally dispatches with the last valid config.
+    // 正常返回会以最后一个有效配置继续派发请求。
   },
   { synchronous: true }
 );
 ```
 
-## Interceptors using `runWhen`
+## 使用 `runWhen` 的拦截器
 
-If you want to execute a particular interceptor based on a runtime check, you can add a runWhen function to the options object. The interceptor will not be executed if and only if the return of runWhen is false. The function will be called with the config object (don't forget that you can bind your own arguments to it as well.) This can be handy when you have an asynchronous request interceptor that only needs to run at certain times.
+如果想根据运行时条件决定是否执行某个拦截器,可以在 options 对象中添加 runWhen 函数。当且仅当 runWhen 返回 false 时,拦截器不会执行。该函数会接收 config 对象作为参数(别忘了还可以给它绑定自己的参数)。当你有一个只在特定情况下才需要运行的异步请求拦截器时,这会非常有用。
 
 ```js
 function onGetCall(config) {
@@ -135,15 +137,15 @@ axios.interceptors.request.use(
 );
 ```
 
-## Interceptor execution order
+## 拦截器的执行顺序
 
-::: warning Request and response interceptors run in **opposite** orders
-Request interceptors are executed in **reverse order** (LIFO — last in, first out). The _last_ request interceptor added is executed _first_.
+::: warning 请求与响应拦截器的执行顺序**相反**
+请求拦截器按**添加的逆序**执行(LIFO——后进先出)。_最后_ 添加的请求拦截器 _最先_ 执行。
 
-Response interceptors are executed in the **order they were added** (FIFO — first in, first out). The _first_ response interceptor added is executed _first_.
+响应拦截器按**添加顺序**执行(FIFO——先进先出)。_最先_ 添加的响应拦截器 _最先_ 执行。
 :::
 
-The following example shows the full execution order for three request interceptors and three response interceptors:
+下面的示例展示了三个请求拦截器和三个响应拦截器的完整执行顺序:
 
 ```js
 const instance = axios.create();
@@ -160,30 +162,30 @@ instance.interceptors.response.use(interceptor("Response Interceptor 1"));
 instance.interceptors.response.use(interceptor("Response Interceptor 2"));
 instance.interceptors.response.use(interceptor("Response Interceptor 3"));
 
-// Console output:
+// 控制台输出:
 // Request Interceptor 3
 // Request Interceptor 2
 // Request Interceptor 1
-// [HTTP request is made]
+// [发出 HTTP 请求]
 // Response Interceptor 1
 // Response Interceptor 2
 // Response Interceptor 3
 ```
 
-## Multiple interceptors
+## 多个拦截器
 
-You may add multiple interceptors to the same request or response. The following will hold true for multiple interceptors in the same chain in the order below:
+你可以为同一个请求或响应添加多个拦截器。同一链条中的多个拦截器按添加顺序满足以下规则:
 
-- Each interceptor is executed
-- Request interceptors are executed in reverse order (LIFO).
-- Response interceptors are executed in the order they were added (FIFO).
-- only the last interceptor's result is returned
-- every interceptor receives the result of its predecessor
-- when the fulfilment-interceptor throws
-  - the following fulfilment-interceptor is not called
-  - the following rejection-interceptor is called
-  - once caught, another following fulfil-interceptor is called again (just like in a promise chain).
+- 每个拦截器都会执行
+- 请求拦截器按逆序执行(LIFO)。
+- 响应拦截器按添加顺序执行(FIFO)。
+- 只有最后一个拦截器的结果会被返回
+- 每个拦截器接收前一个拦截器的结果
+- 当 fulfillment 拦截器抛出异常时
+  - 后续的 fulfillment 拦截器不会被调用
+  - 后续的 rejection 拦截器会被调用
+  - 一旦被捕获,再往后的 fulfillment 拦截器会重新被调用(与 Promise 链一致)。
 
 ::: tip
-To gain an in-depth understanding of how interceptors work, you can read the test cases over [here](https://github.com/axios/axios/blob/v1.x/test/specs/interceptors.spec.js).
+想深入了解拦截器的工作原理,可以阅读[这里的测试用例](https://github.com/axios/axios/blob/v1.x/test/specs/interceptors.spec.js)。
 :::
