@@ -1,12 +1,14 @@
-# Adapters
+> 🌐 本文档由 [axios/axios](https://github.com/axios/axios) 翻译,英文原版见原项目。
 
-Adapters allow you to customize the way axios handles the request data. By default, axios uses an ordered priority list of `['xhr', 'http', 'fetch']` and selects the first adapter that is supported by the current environment. In practice this means `xhr` is used in browsers, `http` in Node.js, and `fetch` in environments where neither is available (such as Cloudflare Workers or Deno).
+# 适配器(Adapters)
 
-Writing your own adapter lets you fully control how axios makes a request and processes the response — useful for testing, custom transports, or non-standard environments.
+适配器让你可以自定义 axios 处理请求数据的方式。默认情况下,axios 使用有序优先级列表 `['xhr', 'http', 'fetch']`,并选择当前环境支持的第一个适配器。实际效果是:浏览器中使用 `xhr`,Node.js 中使用 `http`,两者都不可用的环境(如 Cloudflare Workers 或 Deno)中使用 `fetch`。
 
-## Built-in adapters
+编写自己的适配器可以让你完全控制 axios 如何发起请求和处理响应——这对测试、自定义传输层或非标准环境非常有用。
 
-You can select a built-in adapter by name using the `adapter` config option:
+## 内置适配器
+
+可以通过 `adapter` 配置项按名称选择内置适配器:
 
 ```js
 // Use the fetch adapter
@@ -19,17 +21,17 @@ const instance = axios.create({ adapter: "xhr" });
 const instance = axios.create({ adapter: "http" });
 ```
 
-You can also pass an array of adapter names. axios will use the first one supported by the current environment:
+也可以传入适配器名称数组,axios 会使用当前环境支持的第一个:
 
 ```js
 const instance = axios.create({ adapter: ["fetch", "xhr", "http"] });
 ```
 
-For more details on the `fetch` adapter, see the [Fetch adapter](/pages/advanced/fetch-adapter) page.
+关于 `fetch` 适配器的更多细节,见 [Fetch 适配器](/pages/advanced/fetch-adapter)页面。
 
-## Creating a custom adapter
+## 创建自定义适配器
 
-To create a custom adapter, write a function that accepts a `config` object and returns a Promise that resolves to a valid axios response object.
+要创建自定义适配器,编写一个接受 `config` 对象并返回 Promise 的函数即可,该 Promise 需 resolve 为一个合法的 axios 响应对象。
 
 ```js
 import axios from "axios";
@@ -83,7 +85,7 @@ function myAdapter(config) {
 const instance = axios.create({ adapter: myAdapter });
 ```
 
-TypeScript adapters can preserve both request data and query params on the response config by using the matching generics:
+TypeScript 适配器可以使用对应的泛型,在响应的 config 上保留请求数据和查询参数的类型:
 
 ```ts
 import type {
@@ -116,5 +118,5 @@ const searchAdapter = (
 ```
 
 ::: tip
-The `settle` helper resolves the promise for 2xx status codes and rejects it for everything else, matching axios's default behaviour. If you want custom status validation, use the `validateStatus` config option instead.
+`settle` 辅助函数对 2xx 状态码 resolve Promise,对其余状态码 reject,与 axios 的默认行为一致。如果你想自定义状态码校验逻辑,请改用 `validateStatus` 配置项。
 :::

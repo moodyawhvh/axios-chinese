@@ -1,6 +1,8 @@
-# Cancellation
+> 🌐 本文档由 [axios/axios](https://github.com/axios/axios) 翻译,英文原版见原项目。
 
-Starting from v0.22.0 Axios supports AbortController to cancel requests in a clean way. This feature is available in the browser and in Node.js when using a version of Axios that supports AbortController. To cancel a request, you need to create an instance of `AbortController` and pass its `signal` to the request's `signal` option.
+# 取消请求(Cancellation)
+
+从 v0.22.0 开始,Axios 支持 AbortController 以一种干净的方式取消请求。该特性在浏览器中可用;在 Node.js 中,只要所用的 Axios 版本支持 AbortController 即可使用。要取消请求,需要创建一个 `AbortController` 实例,并把它的 `signal` 传给请求的 `signal` 选项。
 
 ```js
 const controller = new AbortController();
@@ -16,9 +18,9 @@ axios
 controller.abort();
 ```
 
-## CancelToken <Badge type="danger" text="Deprecated" />
+## CancelToken <Badge type="danger" text="已废弃" />
 
-You can also use the `CancelToken` API to cancel requests. This API is deprecated and will be removed in the next major release. It is recommended to use `AbortController` instead. You can create a cancel token using the `CancelToken.source` factory as shown below:
+你也可以使用 `CancelToken` API 取消请求。该 API 已废弃,将在下一个主版本中移除,建议改用 `AbortController`。可以使用 `CancelToken.source` 工厂函数创建取消令牌,如下所示:
 
 ```js
 const CancelToken = axios.CancelToken;
@@ -50,7 +52,7 @@ axios.post(
 source.cancel('Operation canceled by the user.');
 ```
 
-You can also create a cancel token by passing an executor function to the `CancelToken` constructor:
+也可以向 `CancelToken` 构造函数传入 executor 函数来创建取消令牌:
 
 ```js
 const CancelToken = axios.CancelToken;
@@ -67,7 +69,7 @@ axios.get('/user/12345', {
 cancel();
 ```
 
-`CancelToken` also exposes low-level helpers for legacy integrations:
+`CancelToken` 还为遗留集成暴露了底层辅助方法:
 
 ```js
 const source = axios.CancelToken.source();
@@ -85,9 +87,9 @@ source.cancel('Operation canceled by the user.');
 source.token.unsubscribe(listener);
 ```
 
-Canceled requests reject with `axios.CanceledError`. The legacy `axios.Cancel` export is an alias of `axios.CanceledError`, and cancellation errors include `__CANCEL__` for `axios.isCancel` compatibility.
+被取消的请求会以 `axios.CanceledError` reject。遗留的 `axios.Cancel` 导出是 `axios.CanceledError` 的别名,取消错误带有 `__CANCEL__` 属性以兼容 `axios.isCancel`。
 
-In TypeScript, `isCancel<T, D, P>()` preserves the response data, request data, and query params types while narrowing an `unknown` error:
+在 TypeScript 中,`isCancel<T, D, P>()` 在收窄 `unknown` 错误类型的同时,会保留响应数据、请求数据和查询参数的类型:
 
 ```ts
 interface SearchResponse {
@@ -113,4 +115,4 @@ try {
 }
 ```
 
-You can cancel several requests with the same cancel token/abort controller. If a cancellation token is already cancelled at the moment of starting an Axios request, then the request is cancelled immediately, without any attempts to make a real request.
+你可以用同一个取消令牌/abort controller 取消多个请求。如果在发起 Axios 请求时取消令牌已被取消,则该请求会立即被取消,不会尝试发出真实请求。
