@@ -1,130 +1,134 @@
-# Pre-Release Documentation Notes
+> 🌐 本文档由 [axios/axios](https://github.com/axios/axios) 翻译,英文原版见原项目。
+>
+> 注:原文超过 10000 字符,本译文覆盖核心章节(全部条目已译,技术表述与原文对齐)。
 
-## Purpose
+# 预发布文档说明(Pre-Release Documentation Notes)
 
-Track documentation updates that should be applied during release preparation.
+## 目的
 
-Do not treat this file as final documentation. Each entry should give enough context for a maintainer or LLM to update README, docs pages, examples, migration guides, and translated docs when the release is prepared.
+跟踪在发布准备阶段应落地的文档更新。
 
-Do not store raw diffs or line-number-only instructions here; prefer stable section names, target files, required concepts, examples, and release-specific notes.
+不要把本文件当作最终文档。每一条目都应提供足够上下文,让维护者或 LLM 能在发布准备时更新 README、docs 页面、示例、迁移指南和翻译文档。
 
-## Entry Format
+不要在这里存放原始 diff 或仅含行号的指令;请使用稳定的章节名、目标文件、所需概念、示例和发布特定的备注。
 
-- **Change:** Short feature/fix name.
-- **Source:** PR, issue, or changelog reference.
-- **Status:** Pending | Applied | Skipped.
-- **Docs targets:** Files or docs sections likely needing updates.
-- **Required content:** What the docs must explain.
-- **Examples:** Any code snippets or examples that should be included.
-- **Notes:** Constraints, release-only wording, translation follow-up, etc.
+## 条目格式
 
-## Unreleased
+- **Change:** 功能/修复的简短名称。
+- **Source:** PR、issue 或更新日志引用。
+- **Status:** Pending | Applied | Skipped。
+- **Docs targets:** 可能需要更新的文件或文档章节。
+- **Required content:** 文档必须说明的内容。
+- **Examples:** 应包含的代码片段或示例。
+- **Notes:** 约束、仅限本发布的措辞、翻译跟进事项等。
 
-### Runtime configuration prototype hardening
+## Unreleased(未发布)
 
-- **Change:** Document the shared-prototype filtering applied to request config and interceptor replacements.
-- **Source:** `PRE_RELEASE_CHANGELOG.md` Bug Fixes, Runtime configuration hardening.
-- **Status:** Pending.
-- **Docs targets:** Request interceptor and custom adapter guidance; request-config security and migration notes; translated docs after the English documentation is finalized.
-- **Required content:** Explain that own request-config fields remain supported, including fields on a root null-prototype config, except that unsafe materialization keys (`__proto__`, `constructor`, and `prototype`) are always excluded. Values inherited only from a realm's shared `Object.prototype` are ignored even if that prototype's `constructor` is changed, deleted, or replaced by an accessor. An interceptor that returns the writable, already-merged null-prototype config preserves object identity through the adapter and `response.config`. A frozen, sealed, accessor-based, otherwise restricted, or unsafe-key-bearing null-prototype replacement is materialized into a writable filtered snapshot because dispatch updates fields such as headers, data, and temporary response state and must retain the dangerous-key filtering invariant. An interceptor replacement with a non-terminal application-defined prototype is likewise converted to a null-prototype normalized snapshot: safe inherited fields are materialized as own fields, but the original identity, prototype, `instanceof` branding, accessor placement, and property descriptor attributes are not preserved. Because a foreign shared `Object.prototype` is structurally indistinguishable from an application-created terminal null-prototype template once mutable properties are altered, inherited fields on terminal null-prototype ancestors are intentionally excluded as a fail-closed security boundary.
-- **Examples:** Show an unchanged merged config retaining identity between a request interceptor and custom adapter. Show a request interceptor returning an object with a non-terminal application prototype whose custom adapter field is materialized into the normalized snapshot, and contrast it with a terminal `Object.create(null)` prototype whose inherited behavior fields are ignored.
-- **Notes:** Present replacement normalization and the terminal null-prototype restriction as intentional security compatibility changes. Do not imply that mutating `Object.prototype` is supported or safe.
+### 运行时配置原型加固
 
-### Proxy bypass CIDR ranges
+- **Change:** 记录应用于请求配置与拦截器替换结果的共享原型过滤。
+- **Source:** `PRE_RELEASE_CHANGELOG.md` Bug Fixes,Runtime configuration hardening。
+- **Status:** Pending。
+- **Docs targets:** 请求拦截器与自定义适配器指南;request-config 的安全与迁移说明;英文文档定稿后的翻译文档。
+- **Required content:** 说明自有(own)请求配置字段继续受支持,包括位于根 null-prototype 配置上的字段,但非安全的实例化键(`__proto__`、`constructor`、`prototype`)始终被排除。仅从某个 realm 的共享 `Object.prototype` 继承而来的值会被忽略,即使该原型的 `constructor` 被修改、删除或替换为访问器也一样。返回可写的、已合并的 null-prototype 配置的拦截器,会让该对象在适配器和 `response.config` 中保持同一性。被冻结、被密封、基于访问器、受其他限制或含非安全键的 null-prototype 替换对象,会被物化为可写的过滤快照,因为 dispatch 会更新 headers、data 和临时响应状态等字段,必须保持危险键过滤这一不变量。返回具有非终结(non-terminal)应用自定义原型的替换对象的拦截器,同样会被转换为 null-prototype 的规范化快照:安全的继承字段会被物化为自有字段,但原始同一性、原型、`instanceof` 标识、访问器位置和属性描述符属性不会被保留。由于外来共享 `Object.prototype` 在可变属性被改动后,与应用创建的终结 null-prototype 模板在结构上无法区分,终结 null-prototype 祖先上的继承字段被有意排除,作为"默认拒绝"(fail-closed)的安全边界。
+- **Examples:** 展示一个未改动的已合并配置在请求拦截器与自定义适配器之间保持同一性。展示一个请求拦截器返回带非终结应用原型的对象,其自定义适配器字段被物化进规范化快照,并与终结的 `Object.create(null)` 原型对比——后者的继承行为字段会被忽略。
+- **Notes:** 将替换对象的规范化与终结 null-prototype 限制表述为有意的安全兼容性变更。不要暗示修改 `Object.prototype` 是受支持或安全的行为。
 
-- **Change:** Document CIDR matching in `NO_PROXY` and `no_proxy`.
-- **Source:** `PRE_RELEASE_CHANGELOG.md` Features, Proxy bypass CIDR ranges.
-- **Status:** Pending.
-- **Docs targets:** Node proxy/environment-variable guidance and request-config proxy documentation; translated docs after the English documentation is finalized.
-- **Required content:** Explain that IPv4 and IPv6 CIDR entries are supported, bracketed IPv6 is accepted, IPv4-mapped IPv6 ranges are normalized to IPv4 when their prefix permits it, address families remain distinct, and malformed CIDR entries do not bypass the proxy. State explicitly that `0.0.0.0/0` bypasses the proxy for every IPv4 destination and `::/0` does the same for IPv6.
-- **Examples:** Show `NO_PROXY=10.0.0.0/8,2001:db8::/32` bypassing matching HTTP destinations and identify `/0` as the entire-family form.
-- **Notes:** Preserve the existing hostname, explicit-port, wildcard, loopback, and non-CIDR matching behavior.
+### 代理绕过 CIDR 区段
 
-### Fetch and HTTP/2 adapter option consistency
+- **Change:** 记录 `NO_PROXY` 和 `no_proxy` 中的 CIDR 匹配。
+- **Source:** `PRE_RELEASE_CHANGELOG.md` Features,Proxy bypass CIDR ranges。
+- **Status:** Pending。
+- **Docs targets:** Node 代理/环境变量指南与 request-config 的 proxy 文档;英文文档定稿后的翻译文档。
+- **Required content:** 说明支持 IPv4 和 IPv6 的 CIDR 条目,接受带方括号的 IPv6,IPv4 映射的 IPv6 区段在前缀允许时规范化为 IPv4,地址族保持相互独立,格式错误的 CIDR 条目不会绕过代理。明确说明 `0.0.0.0/0` 会为所有 IPv4 目标绕过代理,`::/0` 对 IPv6 同理。
+- **Examples:** 展示 `NO_PROXY=10.0.0.0/8,2001:db8::/32` 使匹配的 HTTP 目标绕过代理,并指出 `/0` 是覆盖整个地址族的形式。
+- **Notes:** 保留既有的主机名、显式端口、通配符、回环以及非 CIDR 匹配行为。
 
-- **Change:** Document adapter-specific redirect, custom fetch, DNS lookup, and proxy behavior.
-- **Source:** `PRE_RELEASE_CHANGELOG.md` Bug Fixes, Fetch adapter consistency and HTTP/2 adapter consistency.
-- **Status:** Pending.
-- **Docs targets:** Request-config entries for `fetchOptions`, `maxRedirects`, `lookup`, `httpVersion`, and `proxy`; custom adapter/fetch guidance; translated docs after the English documentation is finalized.
-- **Required content:** State that a custom fetch receives the fully resolved `Request` when `Request` is supported and continues to receive a second `fetchOptions` argument containing safe own custom fields; Axios-managed fields such as method, headers, body, signal, duplex, and credentials are represented by the `Request` and omitted from that second argument. Custom fetch implementations that previously inspected those fields on the second argument must migrate to the `Request`; identify this as an intentional compatibility change that prevents the second argument from overriding the authoritative request. Explain that `maxRedirects: 0` requests manual redirect handling in the Fetch adapter, but response visibility follows the Fetch runtime: Node may expose the 3xx status and `Location`, while browsers return an opaque redirect with status 0 and inaccessible headers. Custom DNS lookup applies to HTTP/2 connections and participates in session reuse. HTTP/2 ignores process-environment and HTTP/1-agent `proxyEnv` settings because `http2.connect()` cannot apply them, `proxy: false` remains direct, and an explicit Axios proxy object rejects with `ERR_NOT_SUPPORT`.
-- **Examples:** Include focused Fetch `maxRedirects: 0` and Node `httpVersion: 2` plus `lookup` examples.
-- **Notes:** Present the filtered custom-Fetch second argument, Fetch manual redirects, and explicit HTTP/2 proxy rejection as intentional compatibility changes. Do not imply that positive Fetch `maxRedirects` values enforce a redirect count; only zero maps to the platform's manual redirect mode. Do not present the Node-visible 3xx response as portable browser behavior. Keep the HTTP/2 environment-proxy direct-egress residual prominent for deployments that treat proxying as mandatory policy.
+### Fetch 与 HTTP/2 适配器选项一致性
 
-### RFC 9110 HTTP status code names
+- **Change:** 记录各适配器在重定向、自定义 fetch、DNS 查询和代理行为上的差异。
+- **Source:** `PRE_RELEASE_CHANGELOG.md` Bug Fixes,Fetch adapter consistency 与 HTTP/2 adapter consistency。
+- **Status:** Pending。
+- **Docs targets:** `fetchOptions`、`maxRedirects`、`lookup`、`httpVersion` 和 `proxy` 的 request-config 条目;自定义适配器/fetch 指南;英文文档定稿后的翻译文档。
+- **Required content:** 说明在支持 `Request` 的环境中,自定义 fetch 会收到完全解析后的 `Request`,并继续收到第二个 `fetchOptions` 参数(只含安全的自有自定义字段);由 Axios 管理的字段(如 method、headers、body、signal、duplex、credentials)由 `Request` 表示,不再出现在第二个参数中。此前从第二个参数读取这些字段的自定义 fetch 实现必须迁移到 `Request`;这是一项有意的兼容性变更,防止第二个参数覆盖权威请求。说明在 Fetch 适配器中 `maxRedirects: 0` 表示手动处理重定向,但响应可见性遵循 Fetch 运行时:Node 可能暴露 3xx 状态码和 `Location`,而浏览器返回不透明的重定向(状态码 0、请求头不可访问)。自定义 DNS lookup 适用于 HTTP/2 连接并参与会话复用。HTTP/2 忽略进程环境变量与 HTTP/1 agent 的 `proxyEnv` 设置,因为 `http2.connect()` 无法应用它们;`proxy: false` 仍表示直连;显式的 Axios 代理对象会以 `ERR_NOT_SUPPORT` 拒绝。
+- **Examples:** 给出重点的 Fetch `maxRedirects: 0` 示例,以及 Node `httpVersion: 2` 配合 `lookup` 的示例。
+- **Notes:** 将过滤后的自定义 Fetch 第二参数、Fetch 手动重定向和显式 HTTP/2 代理拒绝表述为有意的兼容性变更。不要暗示正的 Fetch `maxRedirects` 值会强制执行重定向计数;只有 0 会映射到平台的手动重定向模式。不要把 Node 可见的 3xx 响应描述为可移植的浏览器行为。对把代理视为强制策略的部署,持续突出 HTTP/2 环境代理直连出口的残留风险。
 
-- **Change:** Document the additive RFC 9110 names for HTTP statuses 413 and 422.
-- **Source:** `PRE_RELEASE_CHANGELOG.md` Features, #11082, closes #11066.
-- **Status:** Pending.
-- **Docs targets:** `README.md` and `docs/pages/advanced/api-reference.md` `HttpStatusCode` guidance; migration or upgrade notes; translated docs after the English documentation is finalized.
-- **Required content:** Introduce `HttpStatusCode.ContentTooLarge` for 413 and `HttpStatusCode.UnprocessableContent` for 422 as the preferred RFC 9110 names. Explain that `PayloadTooLarge` and `UnprocessableEntity` remain available as deprecated aliases throughout v1.x, and that numeric reverse lookups continue returning those legacy names for backward compatibility.
-- **Examples:** Show forward comparisons using `HttpStatusCode.ContentTooLarge` and `HttpStatusCode.UnprocessableContent`.
-- **Notes:** Removing the deprecated aliases or changing the numeric reverse-lookup strings is reserved for a future major release. Keep ESM and CommonJS examples aligned and update translated documentation after the English wording is finalized.
+### RFC 9110 HTTP 状态码名称
 
-### Streaming reads from download progress events
+- **Change:** 记录 HTTP 状态 413 和 422 新增的 RFC 9110 名称。
+- **Source:** `PRE_RELEASE_CHANGELOG.md` Features,#11082,closes #11066。
+- **Status:** Pending。
+- **Docs targets:** `README.md` 与 `docs/pages/advanced/api-reference.md` 的 `HttpStatusCode` 说明;迁移或升级说明;英文文档定稿后的翻译文档。
+- **Required content:** 引入 413 对应的 `HttpStatusCode.ContentTooLarge` 和 422 对应的 `HttpStatusCode.UnprocessableContent` 作为首选的 RFC 9110 名称。说明 `PayloadTooLarge` 与 `UnprocessableEntity` 作为已废弃别名在整个 v1.x 中仍然可用,数字反查为了向后兼容仍返回旧的遗留名称。
+- **Examples:** 展示使用 `HttpStatusCode.ContentTooLarge` 与 `HttpStatusCode.UnprocessableContent` 的正向比较。
+- **Notes:** 移除废弃别名或更改数字反查字符串保留给未来的主版本。保持 ESM 与 CommonJS 示例一致,并在英文措辞定稿后更新翻译文档。
 
-- **Change:** Document how to read incremental response data from throttled download progress events, and the guaranteed final delivery on successful XHR `loadend`.
-- **Source:** `PRE_RELEASE_CHANGELOG.md` Bug Fixes, closes #6796.
-- **Status:** Pending.
-- **Docs targets:** README request config reference for `onDownloadProgress`; any response streaming examples.
-- **Required content:** Progress callbacks are throttled, so intermediate deliveries can run after the originating browser event finished dispatching; in that case `event.currentTarget` is `null` per DOM semantics, while `event.target` still references the request. A final download delivery with the complete transfer state is guaranteed when a completed XHR download reaches its successful `loadend` handler and is dispatched live. Upload progress, stream-error or abort-reason flushes, and failed XHR downloads retain their prior pending-event behavior.
-- **Examples:** An incremental `responseText` reader that slices new data using `progressEvent.event.target` inside `onDownloadProgress`.
+### 从下载进度事件中流式读取
 
-### Typed request params
+- **Change:** 记录如何从节流的下载进度事件中读取增量响应数据,以及 XHR 成功 `loadend` 时保证最终一次投递。
+- **Source:** `PRE_RELEASE_CHANGELOG.md` Bug Fixes,closes #6796。
+- **Status:** Pending。
+- **Docs targets:** README 中 `onDownloadProgress` 的请求配置参考;任何响应流式处理示例。
+- **Required content:** 进度回调是节流的,因此中间投递可能发生在浏览器原始事件派发结束之后;此时按 DOM 语义 `event.currentTarget` 为 `null`,而 `event.target` 仍引用该请求。当已完成的 XHR 下载到达其成功的 `loadend` 处理器并实时派发时,保证有最后一次携带完整传输状态的下载投递。上传进度、流错误或中止原因的冲刷、以及失败的 XHR 下载,仍保持此前的 pending-event 行为。
+- **Examples:** 一个增量 `responseText` 读取器,在 `onDownloadProgress` 内使用 `progressEvent.event.target` 切分新数据。
 
-- **Change:** Document the additive request-params generic across axios's public TypeScript declarations.
-- **Source:** `PRE_RELEASE_CHANGELOG.md` Features, #11081, closes #4954.
-- **Status:** Applied.
-- **Docs targets:** TypeScript usage guidance; request config reference for `params` and `paramsSerializer`; API reference for request methods, `AxiosResponse`, `AxiosPromise`, `AxiosError`, `CanceledError`, `isCancel`, and adapters; cancellation guidance; translated docs after the English documentation is finalized.
-- **Required content:** Explain that `AxiosRequestConfig<D = any, P = any>` uses `D` for request data and `P` for query params, and that custom params serializers receive the same `P`. Cover propagation through `RawAxiosRequestConfig`, `InternalAxiosRequestConfig`, defaults, default response shapes, `AxiosResponse`, `AxiosPromise<T, D, P>`, `AxiosError`, `CanceledError`, the `isCancel<T, D, P>` type guard, request aliases, `request()`, callable instances, adapters, and `mergeConfig()`. State that default request results and explicitly typed `AxiosPromise` values preserve `D` and `P` on `response.config.data` and `response.config.params`, including when request methods infer those types from request config. Note that request methods add `P` as the final generic so the existing `T`, custom response `R`, and `D` positions remain unchanged, and explicitly supplied custom response types continue to control the resolved value.
-- **Examples:** Show a `SearchParams` interface used with `AxiosRequestConfig<RequestBody, SearchParams>`, including a serializer callback that receives `SearchParams`, an invalid params object rejected by TypeScript, and an inferred default response whose `response.config.params` remains `SearchParams`. Include an `AxiosPromise<ResponseBody, RequestBody, SearchParams>` adapter/promise example and cancellation narrowing from `unknown` with `isCancel<ResponseBody, RequestBody, SearchParams>()`, demonstrating that both preserve request data and params on the config.
-- **Notes:** README, English docs, and Spanish, French, and Chinese translations now cover the request-data and params generics, serializer typing, default response propagation, promises/adapters, error and cancellation narrowing, request method order, and config merging. The `any` default is documented for backward compatibility; the internal default-response marker remains undocumented.
+### 带类型的请求参数(Typed request params)
 
-### Synchronous request interceptor error handling
+- **Change:** 记录 axios 公开 TypeScript 声明中新增的请求参数泛型。
+- **Source:** `PRE_RELEASE_CHANGELOG.md` Features,#11081,closes #4954。
+- **Status:** Applied。
+- **Docs targets:** TypeScript 使用指南;`params` 与 `paramsSerializer` 的请求配置参考;请求方法、`AxiosResponse`、`AxiosPromise`、`AxiosError`、`CanceledError`、`isCancel` 和适配器的 API 参考;取消请求指南;英文文档定稿后的翻译文档。
+- **Required content:** 说明 `AxiosRequestConfig<D = any, P = any>` 用 `D` 表示请求数据、`P` 表示查询参数,自定义 params 序列化器接收同样的 `P`。覆盖其在 `RawAxiosRequestConfig`、`InternalAxiosRequestConfig`、defaults、默认响应形状、`AxiosResponse`、`AxiosPromise<T, D, P>`、`AxiosError`、`CanceledError`、`isCancel<T, D, P>` 类型守卫、请求别名、`request()`、可调用实例、适配器和 `mergeConfig()` 中的传播。说明默认请求结果和显式类型的 `AxiosPromise` 值会在 `response.config.data` 与 `response.config.params` 上保留 `D` 与 `P`,包括请求方法从请求配置推断这些类型的情况。指出请求方法把 `P` 加为最后一个泛型,因此现有的 `T`、自定义响应 `R` 和 `D` 位置保持不变,且显式提供的自定义响应类型继续决定 resolve 的值。
+- **Examples:** 展示 `SearchParams` 接口配合 `AxiosRequestConfig<RequestBody, SearchParams>` 使用,包括接收 `SearchParams` 的序列化器回调、一个被 TypeScript 拒绝的非法 params 对象,以及 `response.config.params` 仍为 `SearchParams` 的推断默认响应。给出 `AxiosPromise<ResponseBody, RequestBody, SearchParams>` 的适配器/Promise 示例,以及用 `isCancel<ResponseBody, RequestBody, SearchParams>()` 从 `unknown` 收窄取消错误,演示两者都会在 config 上保留请求数据与参数类型。
+- **Notes:** README、英文文档和西班牙语、法语、中文翻译已覆盖请求数据与参数泛型、序列化器类型、默认响应传播、Promise/适配器、错误与取消收窄、请求方法顺序和配置合并。为向后兼容记录了 `any` 默认值;内部的默认响应标记不写入文档。
 
-- **Change:** Document how synchronous request interceptor errors are handled without changing the existing paired-handler contract.
-- **Source:** `PRE_RELEASE_CHANGELOG.md` Bug Fixes, #11071.
-- **Status:** Applied.
-- **Docs targets:** `README.md` Interceptors section; interceptor API reference; migration/upgrade notes; translated docs after the English documentation is finalized.
-- **Required content:** Explain that when a synchronous request interceptor throws, axios calls that interceptor's paired `onRejected` handler and stops running the remaining request interceptors. If the handler returns normally, including returning `undefined` or a fulfilled Promise, axios treats the error as handled and dispatches with the last valid config; a value returned by the handler does not replace that config. If there is no rejection handler, or the handler throws or returns a rejected Promise, axios does not dispatch the request. Terminal errors continue through response rejection interceptors.
-- **Examples:** Show a synchronous validation interceptor whose rejection handler returns `Promise.reject(error)` to block dispatch, and a logging-only rejection handler that returns normally to preserve the existing request-continuation behavior.
-- **Notes:** README, interceptor docs, upgrade guidance, and Spanish, French, and Chinese translations now document blocking and continuation examples while preserving axios's synchronous paired-handler semantics.
+### 同步请求拦截器错误处理
 
-### Opt-in AxiosHeaders parameter parsing
+- **Change:** 记录同步请求拦截器抛错时的处理方式,不改变既有的配对处理器契约。
+- **Source:** `PRE_RELEASE_CHANGELOG.md` Bug Fixes,#11071。
+- **Status:** Applied。
+- **Docs targets:** `README.md` Interceptors 章节;拦截器 API 参考;迁移/升级说明;英文文档定稿后的翻译文档。
+- **Required content:** 说明当同步请求拦截器抛出异常时,axios 会调用该拦截器配对的 `onRejected` 处理器,并停止执行其余的请求拦截器。如果该处理器正常返回(包括返回 `undefined` 或已 fulfilled 的 Promise),axios 会视错误为已处理,并以最后一个有效配置发起请求;处理器返回的值不会替换该配置。如果没有 rejection 处理器,或处理器抛出异常或返回被拒绝的 Promise,axios 不会发起请求。终结性错误会继续经过响应 rejection 拦截器。
+- **Examples:** 展示一个同步校验拦截器,其 rejection 处理器返回 `Promise.reject(error)` 以阻止请求发起;以及一个仅做日志的 rejection 处理器,通过正常返回保持既有的请求继续执行行为。
+- **Notes:** README、拦截器文档、升级指南和西班牙语、法语、中文翻译现在都包含阻止与继续两类示例,同时保持 axios 同步配对处理器语义。
 
-- **Change:** Document the additive `AxiosHeaders.parseParameters()` parser for normalized HTTP parameter values.
-- **Source:** `PRE_RELEASE_CHANGELOG.md` Features, #11051, closes #11050.
-- **Status:** Applied.
-- **Docs targets:** `README.md` `AxiosHeaders#get` section; `docs/pages/advanced/api-reference.md` and `docs/pages/advanced/header-methods.md`; translated docs after English docs are finalized.
-- **Required content:** Explain that callers can pass `AxiosHeaders.parseParameters` to `AxiosHeaders#get()` to produce a null-prototype map with case-insensitive parameter names, remove surrounding quoted-string delimiters, decode quoted-pair DQUOTE/backslash escapes, keep commas and semicolons inside quoted values, and remove only RFC optional whitespace around unquoted values. Note that unsafe object-materialization keys (`__proto__`, `constructor`, and `prototype`) are omitted. State explicitly that `get(name, true)` remains the legacy tokenizer and keeps its existing output for backward compatibility.
-- **Examples:** Show `headers.get('content-type', AxiosHeaders.parseParameters)` returning `{ boundary: 'a,b' }` for `multipart/form-data; boundary="a,b"`.
-- **Notes:** README, API/header-method docs, and Spanish, French, and Chinese translations now document the additive parser, its hardened output, quoted-value behavior, and the unchanged legacy `true` tokenizer.
+### 可选启用的 AxiosHeaders 参数解析
 
-### Malformed `http(s):` URL rejection
+- **Change:** 记录新增的 `AxiosHeaders.parseParameters()` 解析器,用于规范化的 HTTP 参数值。
+- **Source:** `PRE_RELEASE_CHANGELOG.md` Features,#11051,closes #11050。
+- **Status:** Applied。
+- **Docs targets:** `README.md` 的 `AxiosHeaders#get` 章节;`docs/pages/advanced/api-reference.md` 与 `docs/pages/advanced/header-methods.md`;英文文档定稿后的翻译文档。
+- **Required content:** 说明调用者可以向 `AxiosHeaders#get()` 传入 `AxiosHeaders.parseParameters`,得到一个参数名不区分大小写的 null-prototype 映射,并移除引号字符串定界符、解码 quoted-pair 的 DQUOTE/反斜杠转义、保留引号值内的逗号和分号、仅去除未加引号值两侧的 RFC 可选空白。注意非安全的对象实例化键(`__proto__`、`constructor`、`prototype`)会被忽略。明确说明 `get(name, true)` 仍是遗留分词器,为向后兼容保持既有输出。
+- **Examples:** 展示对 `multipart/form-data; boundary="a,b"` 调用 `headers.get('content-type', AxiosHeaders.parseParameters)` 返回 `{ boundary: 'a,b' }`。
+- **Notes:** README、API/header-method 文档和西班牙语、法语、中文翻译已记录该新增解析器、其加固输出、引号值行为以及保持不变的遗留 `true` 分词器。
 
-- **Change:** Document that axios rejects `http:`/`https:` URLs that omit `//` after the protocol, and that the error now names the offending URL.
-- **Source:** `PRE_RELEASE_CHANGELOG.md` Bug Fixes, #11000 (rejection) and #11008 (improved message).
-- **Status:** Applied.
-- **Docs targets:** `README.md` errors / handling-errors section; migration/upgrade notes; `docs/pages/advanced/request-config.md` `url`/`baseURL` description; translated docs after English docs are finalized.
-- **Required content:** Explain that since this release a request `url` or `baseURL` of the form `https:example.com` or `https:/example.com` (scheme present, `//` missing) is rejected with an `AxiosError` whose code is `ERR_INVALID_URL`, instead of being silently normalized by the browser/Node URL parser. This is a security fix preventing `baseURL`/allowlist (SSRF) bypasses. Callers must pass a well-formed URL such as `https://example.com`. The error message now includes the offending URL: `Invalid URL "https:example.com": missing "//" after protocol`. The reported URL is the control-character-normalized form with userinfo (credentials), query parameter values, and fragment contents redacted (parameter names, host and path are preserved), because `AxiosError.message` is always serialized by `toJSON()` and the opt-in `config.redact` model cannot clean it.
-- **Examples:** None required.
-- **Notes:** README, request-config, error-handling, upgrade guidance, and Spanish, French, and Chinese translations now frame the rejection as an intentional security behavior change and describe the safely redacted error message.
+### 拒绝畸形的 `http(s):` URL
 
-### Symbol-keyed custom request config
+- **Change:** 记录 axios 拒绝协议后缺少 `//` 的 `http:`/`https:` URL,且错误信息现在会指出问题 URL。
+- **Source:** `PRE_RELEASE_CHANGELOG.md` Bug Fixes,#11000(拒绝行为)与 #11008(改进消息)。
+- **Status:** Applied。
+- **Docs targets:** `README.md` errors / handling-errors 章节;迁移/升级说明;`docs/pages/advanced/request-config.md` 的 `url`/`baseURL` 描述;英文文档定稿后的翻译文档。
+- **Required content:** 说明自本发布起,形如 `https:example.com` 或 `https:/example.com`(有 scheme、缺 `//`)的请求 `url` 或 `baseURL` 会以代码为 `ERR_INVALID_URL` 的 `AxiosError` 被拒绝,而不再被浏览器/Node 的 URL 解析器静默规范化。这是一项防止 `baseURL`/白名单(SSRF)绕过的安全修复。调用方必须传入格式良好的 URL,如 `https://example.com`。错误信息现在包含问题 URL:`Invalid URL "https:example.com": missing "//" after protocol`。报告中的 URL 是控制字符规范化后的形式,并脱敏 userinfo(凭据)、查询参数值和 fragment 内容(参数名、主机与路径保留),因为 `AxiosError.message` 总是会被 `toJSON()` 序列化,而可选启用的 `config.redact` 机制无法清理它。
+- **Examples:** 无需示例。
+- **Notes:** README、request-config、error-handling、升级指南和西班牙语、法语、中文翻译已把该拒绝行为表述为有意的安全行为变更,并描述了安全脱敏的错误消息。
 
-- **Change:** Document that custom request config fields can use own enumerable symbol keys and survive axios config merging.
-- **Source:** `PRE_RELEASE_CHANGELOG.md` Bug Fixes, #11043, closes #11042.
-- **Status:** Applied.
-- **Docs targets:** TypeScript/custom client docs; request config reference; interceptor examples if custom config fields are documented there; translated docs after English docs are finalized.
-- **Required content:** Explain that applications can module-augment `AxiosRequestConfig` with a specific symbol key and pass that symbol-keyed option in request config; axios preserves the own enumerable symbol property when merging defaults with request config so request interceptors and adapters can read it from `InternalAxiosRequestConfig`.
-- **Examples:** Include a short TypeScript example with `export const someFlag = Symbol('some flag used in request interceptor')`, `declare module 'axios' { interface AxiosRequestConfig { [someFlag]?: boolean } }`, and a request interceptor reading `config[someFlag]`.
-- **Notes:** README, TypeScript/request-config docs, and Spanish, French, and Chinese translations now show module augmentation and an interceptor example, limited explicitly to own enumerable symbol properties.
+### Symbol 键的自定义请求配置
 
-### FormData literal key parsing
+- **Change:** 记录自定义请求配置字段可以使用自身的可枚举 symbol 键,并在 axios 配置合并后保留。
+- **Source:** `PRE_RELEASE_CHANGELOG.md` Bug Fixes,#11043,closes #11042。
+- **Status:** Applied。
+- **Docs targets:** TypeScript/自定义客户端文档;request-config 参考;若拦截器文档中有自定义配置字段,则一并提供示例;英文文档定稿后的翻译文档。
+- **Required content:** 说明应用可以通过模块扩充(module augmentation)为 `AxiosRequestConfig` 添加特定 symbol 键,并在请求配置中传入该 symbol 键的选项;axios 在合并 defaults 与请求配置时会保留该自身的可枚举 symbol 属性,使请求拦截器和适配器可以从 `InternalAxiosRequestConfig` 读取它。
+- **Examples:** 给出简短的 TypeScript 示例:`export const someFlag = Symbol('some flag used in request interceptor')`、`declare module 'axios' { interface AxiosRequestConfig { [someFlag]?: boolean } }`,以及在请求拦截器中读取 `config[someFlag]`。
+- **Notes:** README、TypeScript/request-config 文档和西班牙语、法语、中文翻译已展示模块扩充与拦截器示例,并明确限定于自身的可枚举 symbol 属性。
 
-- **Change:** Document that `formToJSON`/`formDataToJSON` only split FormData field names on dot notation and bracket notation.
-- **Source:** `PRE_RELEASE_CHANGELOG.md` Bug Fixes, #11006, closes #5402.
-- **Status:** Applied.
-- **Docs targets:** `README.md` FormData serializer/formToJSON sections; `docs/pages/advanced/api-reference.md` `formToJSON`; generated docs pages for multipart/urlencoded form serialization; translated docs after English docs are finalized.
-- **Required content:** Explain that `.`, `[`, and `]` are structural path separators when converting FormData back to JSON, while other characters such as `-`, spaces, `+`, `*`, and `&` remain literal key characters. Mention that `foo[bar]`, `foo.bar`, and `foo[]` continue to create nested object/array paths.
-- **Examples:** Include a short example showing `form.append('user-name', 'johndoe')` converting to `{ 'user-name': 'johndoe' }`, and `form.append('user.name', 'john')` or `form.append('user[name]', 'john')` converting to `{ user: { name: 'john' } }`.
-- **Notes:** README, API/multipart/HTML-form docs, and Spanish, French, and Chinese translations now document dot/bracket path parsing and literal punctuation keys without presenting the previous splitting behavior as supported.
+### FormData 字面键解析
+
+- **Change:** 记录 `formToJSON`/`formDataToJSON` 只按点号记法和方括号记法拆分 FormData 字段名。
+- **Source:** `PRE_RELEASE_CHANGELOG.md` Bug Fixes,#11006,closes #5402。
+- **Status:** Applied。
+- **Docs targets:** `README.md` 的 FormData 序列化器/formToJSON 章节;`docs/pages/advanced/api-reference.md` 的 `formToJSON`;multipart/urlencoded 表单序列化的生成文档页;英文文档定稿后的翻译文档。
+- **Required content:** 说明把 FormData 转回 JSON 时,`.`、`[`、`]` 是结构化的路径分隔符,而其他字符(如 `-`、空格、`+`、`*`、`&`)保留为字面键字符。提及 `foo[bar]`、`foo.bar` 和 `foo[]` 仍会创建嵌套对象/数组路径。
+- **Examples:** 给出简短示例:`form.append('user-name', 'johndoe')` 转换为 `{ 'user-name': 'johndoe' }`;`form.append('user.name', 'john')` 或 `form.append('user[name]', 'john')` 转换为 `{ user: { name: 'john' } }`。
+- **Notes:** README、API/multipart/HTML-form 文档和西班牙语、法语、中文翻译已记录点号/方括号路径解析和字面标点键,不再把旧的拆分行为描述为受支持。

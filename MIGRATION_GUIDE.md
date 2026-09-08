@@ -1,47 +1,51 @@
-# Axios Migration Guide
+> 🌐 本文档由 [axios/axios](https://github.com/axios/axios) 翻译,英文原版见原项目。
+>
+> 注:原文超过 10000 字符,本译文覆盖核心章节(全部章节文字已译,代码块保持原样)。
 
-> **Migrating from Axios 0.x to 1.x**
-> 
-> This guide helps developers upgrade from Axios 0.x to 1.x by documenting breaking changes, providing migration strategies, and offering solutions to common upgrade challenges.
+# Axios 迁移指南
 
-## Table of Contents
+> **从 Axios 0.x 迁移到 1.x**
+>
+> 本指南通过记录破坏性变更、提供迁移策略以及常见升级难题的解决方案,帮助开发者从 Axios 0.x 升级到 1.x。
 
-- [Overview](#overview)
-- [Breaking Changes](#breaking-changes)
-- [Error Handling Migration](#error-handling-migration)
-- [API Changes](#api-changes)
-- [Configuration Changes](#configuration-changes)
-- [Migration Strategies](#migration-strategies)
-- [Common Patterns](#common-patterns)
-- [Troubleshooting](#troubleshooting)
-- [Resources](#resources)
+## 目录
 
-## Overview
+- [概述](#概述)
+- [破坏性变更](#破坏性变更)
+- [错误处理迁移](#错误处理迁移)
+- [API 变更](#api-变更)
+- [配置变更](#配置变更)
+- [迁移策略](#迁移策略)
+- [常见模式](#常见模式)
+- [故障排查](#故障排查)
+- [资源](#资源)
 
-Axios 1.x introduced several breaking changes to improve consistency, security, and developer experience. While these changes provide better error handling and more predictable behavior, they require code updates when migrating from 0.x versions.
+## 概述
 
-### Key Changes Summary
+Axios 1.x 引入了若干破坏性变更,以提升一致性、安全性和开发者体验。虽然这些变更带来了更好的错误处理和更可预测的行为,但从 0.x 版本迁移时需要更新代码。
 
-| Area | 0.x Behavior | 1.x Behavior | Impact |
+### 关键变更摘要
+
+| 领域 | 0.x 行为 | 1.x 行为 | 影响 |
 |------|--------------|--------------|--------|
-| Error Handling | Selective throwing | Consistent throwing | High |
-| JSON Parsing | Lenient | Strict | Medium |
-| Browser Support | IE11+ | Modern browsers | Low-Medium |
-| TypeScript | Partial | Full support | Low |
+| 错误处理 | 选择性抛出 | 一致地抛出 | 高 |
+| JSON 解析 | 宽松 | 严格 | 中 |
+| 浏览器支持 | IE11+ | 现代浏览器 | 低-中 |
+| TypeScript | 部分支持 | 完整支持 | 低 |
 
-### Migration Complexity
+### 迁移复杂度
 
-- **Simple applications**: 1-2 hours
-- **Medium applications**: 1-2 days  
-- **Large applications with complex error handling**: 3-5 days
+- **简单应用**:1-2 小时
+- **中等应用**:1-2 天
+- **带复杂错误处理的大型应用**:3-5 天
 
-## Breaking Changes
+## 破坏性变更
 
-### 1. Error Handling Changes
+### 1. 错误处理变更
 
-**The most significant change in Axios 1.x is how errors are handled.**
+**Axios 1.x 中最重要的变化是错误的处理方式。**
 
-#### 0.x Behavior
+#### 0.x 行为
 ```javascript
 // Axios 0.x - Some HTTP error codes didn't throw
 axios.get('/api/data')
@@ -60,7 +64,7 @@ axios.interceptors.response.use(
 );
 ```
 
-#### 1.x Behavior
+#### 1.x 行为
 ```javascript
 // Axios 1.x - All HTTP errors throw consistently
 axios.get('/api/data')
@@ -83,21 +87,21 @@ axios.interceptors.response.use(
 );
 ```
 
-#### Impact
-- **Response interceptors** can no longer "swallow" errors silently
-- **Every API call** must handle errors explicitly or they become unhandled promise rejections
-- **Centralized error handling** requires new patterns
+#### 影响
+- **响应拦截器**不再能"悄悄吞掉"错误
+- **每一个 API 调用**都必须显式处理错误,否则会变成未处理的 Promise rejection
+- **集中式错误处理**需要采用新的模式
 
-### 2. JSON Parsing Changes
+### 2. JSON 解析变更
 
-#### 0.x Behavior
+#### 0.x 行为
 ```javascript
 // Axios 0.x - Lenient JSON parsing
 // Would attempt to parse even invalid JSON
 response.data; // Might contain partial data or fallbacks
 ```
 
-#### 1.x Behavior
+#### 1.x 行为
 ```javascript
 // Axios 1.x - Strict JSON parsing
 // Throws clear errors for invalid JSON
@@ -108,9 +112,9 @@ try {
 }
 ```
 
-### 3. Request/Response Transform Changes
+### 3. 请求/响应转换器变更
 
-#### 0.x Behavior
+#### 0.x 行为
 ```javascript
 // Implicit transformations with some edge cases
 transformRequest: [function (data) {
@@ -119,7 +123,7 @@ transformRequest: [function (data) {
 }]
 ```
 
-#### 1.x Behavior
+#### 1.x 行为
 ```javascript
 // More consistent transformation pipeline
 transformRequest: [function (data, headers) {
@@ -129,17 +133,17 @@ transformRequest: [function (data, headers) {
 }]
 ```
 
-### 4. Browser Support Changes
+### 4. 浏览器支持变更
 
-- **0.x**: Supported IE11 and older browsers
-- **1.x**: Requires modern browsers with Promise support
-- **Polyfills**: May be needed for older browser support
+- **0.x**:支持 IE11 及更老的浏览器
+- **1.x**:要求支持 Promise 的现代浏览器
+- **Polyfill**:如需支持老浏览器可能需要引入
 
-## Error Handling Migration
+## 错误处理迁移
 
-The error handling changes are the most complex part of migrating to Axios 1.x. Here are proven strategies:
+错误处理的变更迁移到 Axios 1.x 时最复杂的部分。以下是经过验证的策略:
 
-### Strategy 1: Centralized Error Handling with Error Boundary
+### 策略 1:使用错误边界做集中式错误处理
 
 ```javascript
 // Create a centralized error handler
@@ -229,7 +233,7 @@ async function fetchUserData(userId) {
 }
 ```
 
-### Strategy 2: Wrapper Function Pattern
+### 策略 2:包装函数模式
 
 ```javascript
 // Create a wrapper that provides 0.x-like behavior
@@ -296,7 +300,7 @@ if (result.error) {
 }
 ```
 
-### Strategy 3: Global Error Handler with Custom Events
+### 策略 3:基于自定义事件的全局错误处理器
 
 ```javascript
 // Set up global error handling with events
@@ -351,11 +355,11 @@ async function apiCall() {
 }
 ```
 
-## API Changes
+## API 变更
 
-### Request Configuration
+### 请求配置
 
-#### 0.x to 1.x Changes
+#### 0.x 到 1.x 的变更
 ```javascript
 // 0.x - Some properties had different defaults
 const config = {
@@ -371,9 +375,9 @@ const config = {
 };
 ```
 
-### Response Object
+### 响应对象
 
-The response object structure remains largely the same, but error responses are more consistent:
+响应对象的结构大体不变,但错误响应更加一致:
 
 ```javascript
 // Both 0.x and 1.x
@@ -397,9 +401,9 @@ error.response = {
 };
 ```
 
-## Configuration Changes
+## 配置变更
 
-### Default Configuration Updates
+### 默认配置更新
 
 ```javascript
 // 0.x defaults
@@ -412,7 +416,7 @@ axios.defaults.maxContentLength = 2000; // 2MB limit
 axios.defaults.maxBodyLength = 2000; // 2MB limit
 ```
 
-### Instance Configuration
+### 实例配置
 
 ```javascript
 // 0.x - Instance creation
@@ -430,12 +434,12 @@ const api = axios.create({
 });
 ```
 
-## Migration Strategies
+## 迁移策略
 
-### Step-by-Step Migration Process
+### 分步迁移流程
 
-#### Phase 1: Preparation
-1. **Audit Current Error Handling**
+#### 阶段 1:准备
+1. **审计现有错误处理**
    ```bash
    # Find all axios usage
    grep -r "axios\." src/
@@ -443,12 +447,12 @@ const api = axios.create({
    grep -r "interceptors" src/
    ```
 
-2. **Identify Patterns**
-   - Response interceptors that handle errors
-   - Components that rely on centralized error handling
-   - Authentication and retry logic
+2. **识别模式**
+   - 处理错误的响应拦截器
+   - 依赖集中式错误处理的组件
+   - 认证与重试逻辑
 
-3. **Create Test Cases**
+3. **创建测试用例**
    ```javascript
    // Test current error handling behavior
    describe('Error Handling Migration', () => {
@@ -462,18 +466,18 @@ const api = axios.create({
    });
    ```
 
-#### Phase 2: Implementation
-1. **Update Dependencies**
+#### 阶段 2:实施
+1. **更新依赖**
    ```bash
    npm update axios
    ```
 
-2. **Implement New Error Handling**
-   - Choose one of the strategies above
-   - Update response interceptors
-   - Add error handling to API calls
+2. **落地新的错误处理**
+   - 从上面的策略中选择一种
+   - 更新响应拦截器
+   - 为 API 调用添加错误处理
 
-3. **Update Authentication Logic**
+3. **更新认证逻辑**
    ```javascript
    // 0.x pattern
    axios.interceptors.response.use(null, error => {
@@ -495,21 +499,21 @@ const api = axios.create({
    );
    ```
 
-#### Phase 3: Testing and Validation
-1. **Test Error Scenarios**
-   - Network failures
-   - HTTP error codes (401, 403, 404, 500, etc.)
-   - Timeout errors
-   - JSON parsing errors
+#### 阶段 3:测试与验证
+1. **测试错误场景**
+   - 网络故障
+   - HTTP 错误码(401、403、404、500 等)
+   - 超时错误
+   - JSON 解析错误
 
-2. **Validate User Experience**
-   - Error messages are shown appropriately
-   - Authentication redirects work
-   - Loading states are handled correctly
+2. **验证用户体验**
+   - 错误提示正常展示
+   - 认证重定向正常工作
+   - 加载状态处理正确
 
-### Gradual Migration Approach
+### 渐进式迁移方案
 
-For large applications, consider gradual migration:
+对于大型应用,可以考虑渐进式迁移:
 
 ```javascript
 // Create a compatibility layer
@@ -544,11 +548,11 @@ function createLegacyWrapper(axiosInstance) {
 }
 ```
 
-## Common Patterns
+## 常见模式
 
-### Authentication Interceptors
+### 认证拦截器
 
-#### Updated Authentication Pattern
+#### 更新后的认证模式
 ```javascript
 // Token refresh interceptor for 1.x
 let isRefreshing = false;
@@ -601,7 +605,7 @@ axios.interceptors.response.use(
 );
 ```
 
-### Retry Logic
+### 重试逻辑
 
 ```javascript
 // Retry interceptor for 1.x
@@ -640,7 +644,7 @@ createRetryInterceptor(3, 1000);
 api.get('/api/data', { retry: true });
 ```
 
-### Loading State Management
+### 加载状态管理
 
 ```javascript
 // Loading interceptor for 1.x
@@ -681,19 +685,19 @@ class LoadingManager {
 const loadingManager = new LoadingManager();
 ```
 
-## Troubleshooting
+## 故障排查
 
-### Common Migration Issues
+### 常见迁移问题
 
-#### Issue 1: Unhandled Promise Rejections
+#### 问题 1:未处理的 Promise Rejection
 
-**Problem:**
+**问题:**
 ```javascript
 // This pattern worked in 0.x but causes unhandled rejections in 1.x
 axios.get('/api/data'); // No .catch() handler
 ```
 
-**Solution:**
+**解决方案:**
 ```javascript
 // Always handle promises
 axios.get('/api/data')
@@ -714,9 +718,9 @@ async function fetchData() {
 }
 ```
 
-#### Issue 2: Response Interceptors Not "Handling" Errors
+#### 问题 2:响应拦截器无法再"接管"错误
 
-**Problem:**
+**问题:**
 ```javascript
 // 0.x style - interceptor "handled" errors
 axios.interceptors.response.use(null, error => {
@@ -725,7 +729,7 @@ axios.interceptors.response.use(null, error => {
 });
 ```
 
-**Solution:**
+**解决方案:**
 ```javascript
 // 1.x style - explicitly control error propagation
 axios.interceptors.response.use(
@@ -748,16 +752,16 @@ axios.interceptors.response.use(
 );
 ```
 
-#### Issue 3: JSON Parsing Errors
+#### 问题 3:JSON 解析错误
 
-**Problem:**
+**问题:**
 ```javascript
 // 1.x is stricter about JSON parsing
 // This might throw where 0.x was lenient
 const data = response.data;
 ```
 
-**Solution:**
+**解决方案:**
 ```javascript
 // Add response transformer for better error handling
 axios.defaults.transformResponse = [
@@ -776,16 +780,16 @@ axios.defaults.transformResponse = [
 ];
 ```
 
-#### Issue 4: TypeScript Errors After Upgrade
+#### 问题 4:升级后的 TypeScript 错误
 
-**Problem:**
+**问题:**
 ```typescript
 // TypeScript errors after upgrade
 const response = await axios.get('/api/data');
 // Property 'someProperty' does not exist on type 'any'
 ```
 
-**Solution:**
+**解决方案:**
 ```typescript
 // Define proper interfaces
 interface ApiResponse {
@@ -799,9 +803,9 @@ const response = await axios.get<ApiResponse>('/api/data');
 console.log(response.data.data);
 ```
 
-### Debug Migration Issues
+### 调试迁移问题
 
-#### Enable Debug Logging
+#### 启用调试日志
 ```javascript
 // Add request/response logging
 axios.interceptors.request.use(config => {
@@ -821,7 +825,7 @@ axios.interceptors.response.use(
 );
 ```
 
-#### Compare Behavior
+#### 对比行为
 ```javascript
 // Create side-by-side comparison during migration
 const axios0x = require('axios-0x'); // Keep old version for testing
@@ -842,36 +846,36 @@ async function compareRequests(config) {
 }
 ```
 
-## Resources
+## 资源
 
-### Official Documentation
-- [Axios 1.x Documentation](https://axios-http.com/)
-- [Axios GitHub Repository](https://github.com/axios/axios)
-- [Axios Changelog](https://github.com/axios/axios/blob/main/CHANGELOG.md)
+### 官方文档
+- [Axios 1.x 文档](https://axios-http.com/)
+- [Axios GitHub 仓库](https://github.com/axios/axios)
+- [Axios 更新日志](https://github.com/axios/axios/blob/main/CHANGELOG.md)
 
-### Migration Tools
-- [Axios Migration Codemod](https://github.com/axios/axios-migration-codemod) *(if available)*
-- [ESLint Rules for Axios 1.x](https://github.com/axios/eslint-plugin-axios) *(if available)*
+### 迁移工具
+- [Axios Migration Codemod](https://github.com/axios/axios-migration-codemod) *(如可用)*
+- [Axios 1.x 的 ESLint 规则](https://github.com/axios/eslint-plugin-axios) *(如可用)*
 
-### Community Resources
-- [Stack Overflow - Axios Migration Questions](https://stackoverflow.com/questions/tagged/axios+migration)
+### 社区资源
+- [Stack Overflow - Axios 迁移问题](https://stackoverflow.com/questions/tagged/axios+migration)
 - [GitHub Discussions](https://github.com/axios/axios/discussions)
-- [Axios Discord Community](https://discord.gg/axios) *(if available)*
+- [Axios Discord 社区](https://discord.gg/axios) *(如可用)*
 
-### Related Issues
-- [Error Handling Changes Discussion](https://github.com/axios/axios/issues/7208)
-- [Migration Guide Request](https://github.com/axios/axios/issues/xxxx) *(link to related issues)*
-
----
-
-## Need Help?
-
-If you encounter issues during migration that aren't covered in this guide:
-
-1. **Search existing issues** in the [Axios GitHub repository](https://github.com/axios/axios/issues)
-2. **Ask questions** in [GitHub Discussions](https://github.com/axios/axios/discussions)
-3. **Contribute improvements** to this migration guide
+### 相关 Issue
+- [错误处理变更讨论](https://github.com/axios/axios/issues/7208)
+- [迁移指南请求](https://github.com/axios/axios/issues/xxxx) *(相关 issue 链接)*
 
 ---
 
-*This migration guide is maintained by the community. If you find errors or have suggestions, please [open an issue](https://github.com/axios/axios/issues) or submit a pull request.*
+## 需要帮助?
+
+如果迁移中遇到本指南未覆盖的问题:
+
+1. 在 [Axios GitHub 仓库](https://github.com/axios/axios/issues)中**搜索已有 issue**
+2. 在 [GitHub Discussions](https://github.com/axios/axios/discussions) 中**提问**
+3. 为本迁移指南**贡献改进**
+
+---
+
+*本迁移指南由社区维护。如发现错误或有建议,请[提交 issue](https://github.com/axios/axios/issues)或发起 pull request。*
