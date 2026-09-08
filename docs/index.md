@@ -4,28 +4,30 @@ layout: home
 search: false
 
 hero:
-  name: 'axios docs'
-  text: 'axios is a simple HTTP client for the browser and Node.js'
+  name: 'axios 文档'
+  text: 'axios 是一个面向浏览器与 Node.js 的简洁 HTTP 客户端'
   image:
     dark: /logo.svg
     light: /logo-light.svg
     alt: axios
   actions:
     - theme: brand
-      text: Get started
+      text: 快速开始
       link: /pages/getting-started/first-steps
     - theme: alt
-      text: API reference
+      text: API 参考
       link: /pages/advanced/api-reference
 
 features:
-  - title: Simple implementation
-    details: Getting started with axios is as simple as a single line of code. Making simple API requests can be done in 2 lines of code.
-  - title: Powerful interceptors
-    details: Our innovative interceptor system allows you to control the request and response lifecycle. You can modify requests, responses, and errors.
-  - title: TypeScript support
-    details: axios declares types and has full support for TypeScript. This means you can use axios with confidence in your TypeScript projects.
+  - title: 实现简洁
+    details: axios 上手只需一行代码,简单的 API 请求两行代码即可完成。
+  - title: 强大的拦截器
+    details: 别具匠心的拦截器系统让你掌控请求与响应的完整生命周期,可以修改请求、响应和错误。
+  - title: TypeScript 支持
+    details: axios 自带类型声明,完整支持 TypeScript,让你在 TypeScript 项目中放心使用。
 ---
+
+> 🌐 本文档由 [axios/axios](https://github.com/axios/axios) 翻译,英文原版见原项目。本文件超过 10000 字符,仅翻译核心章节(页面文案),脚本与样式代码保持原样。
 
 <script setup>
 import Splide from '@splidejs/splide';
@@ -75,7 +77,7 @@ const capitalizeFirstLetter = (word) => {
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@splidejs/splide@4.1.4/dist/css/splide.min.css">
 
 <div style="margin: 0 auto; max-width: 1200px;">
-  <h3 style="line-height: 64px;font-size: 28px;letter-spacing: -0.4px;font-weight: 600;margin-top: 2rem;">Sponsors</h3>
+  <h3 style="line-height: 64px;font-size: 28px;letter-spacing: -0.4px;font-weight: 600;margin-top: 2rem;">赞助商</h3>
 </div>
 <div v-if="sponsors.length > 0" :class="$style.container" class="splide">
   <div class="splide__track">

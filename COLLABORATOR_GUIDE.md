@@ -1,59 +1,61 @@
-# Collaborator guide
+> 🌐 本文档由 [axios/axios](https://github.com/axios/axios) 翻译,英文原版见原项目。
 
-As a collaborator, you help administer axios. This guide covers the responsibilities that come with that access. For architecture, lifecycle, security-sensitive code, and conventions, use [AGENTS.md](./AGENTS.md), the canonical contributor guide.
+# 协作者指南
 
-## Code of conduct
+作为协作者,你需要协助管理 axios。本指南说明这一权限所对应的责任。关于架构、生命周期、安全敏感代码和约定,请参阅 [AGENTS.md](./AGENTS.md)——它是贡献者的权威指南。
 
-Read the [Code of Conduct](./CODE_OF_CONDUCT.md) and help enforce it. Keep the community friendly and welcoming.
+## 行为准则
 
-## Triage issues
+阅读[行为准则](./CODE_OF_CONDUCT.md)并协助执行,保持社区友善、包容。
 
-- Apply appropriate labels and respond as needed.
-- For bug reports, ask for a minimal reproduction (axios version, environment, request/response details) before deeper triage.
-- If an issue is not directly about axios, convert it to a discussion.
-- Close issues only when they are resolved, a fix is merged, the report lacks enough detail or a reproduction, or the reporter requests closure. Do not close issues for inactivity. We want to keep the history and respond if more information comes in later.
+## 分类处理 issue
 
-## Answer questions
+- 打上合适的标签,并按需回复。
+- 对于 bug 报告,在深入分类之前,先要求提供最小可复现示例(axios 版本、环境、请求/响应细节)。
+- 如果 issue 与 axios 没有直接关系,将其转为 discussion。
+- 只有在问题已解决、修复已合并、报告缺少足够细节或复现步骤、或报告者主动要求关闭时才关闭 issue。不要因为长期不活跃而关闭 issue——我们希望保留历史记录,以便后续有新信息时继续响应。
 
-Be helpful and patient. If a question comes from unclear docs, update the docs and consider adding an example instead of only answering in the thread. You are not expected to teach JavaScript or unrelated tooling. Redirect those questions politely.
+## 回答问题
 
-## Submit PRs
+要有帮助、有耐心。如果问题源于文档不清晰,请更新文档,并考虑补一个示例,而不只是在讨论串里回答。你没有义务教 JavaScript 或无关工具的使用,可以礼貌地把这类问题引导到别处。
 
-When opening a PR, make sure:
+## 提交 PR
 
-- The change fits within axios. Decline features early and kindly when they belong in user code or a plugin.
-- Cover behavior across the XHR, Fetch, and Node HTTP adapters where relevant. Detect by capability, not environment name.
-- Update both `index.d.ts` (ESM) and `index.d.cts` (CJS) when the public API changes.
-- Make axios-originated failures throw `AxiosError` with an appropriate code, never raw `Error`. Wrap third-party errors with `AxiosError.from`.
-- Cover the change with unit tests. Update browser, smoke, or module suites when packaging or runtime surface is affected.
-- Lint and tests pass before review. Do not merge red PRs.
-- Do not add runtime dependencies without discussion. `package-lock.json` changes must keep `lockfile-lint` happy (npm HTTPS hosts, integrity hashes).
-- Package and GitHub Actions update PRs are maintainer/bot-only. Close PRs from outside collaborators that only update npm packages, lockfiles, or GitHub Actions versions.
-- Keep the 7-day Dependabot delay for these updates. Bypass it only when a critical vulnerability requires a maintainer-led manual update.
-- Security-sensitive changes get extra scrutiny and focused regression tests. This includes URL construction, redirects, proxy/env handling, XSRF, socket paths, decompression limits, prototype walking, and adapters. Consult [THREATMODEL.md](./THREATMODEL.md).
-- Warn before removing functionality.
-- New public API surface is predictable, consistent with existing options, and documented.
-- PR titles use [Conventional Commits](https://www.conventionalcommits.org/) (`fix:`, `feat:`, `chore:`, `docs:`, etc.). Release tooling depends on this.
-- Call out whether the change is patch, minor, or breaking, and target the right branch (`v1.x` for the current maintenance line; breaking work goes elsewhere).
+发起 PR 时,请确保:
 
-At least one maintainer must review and approve a PR before merge. If you are unsure about the impact of a change, ask for a second opinion. Call out breaking changes in the PR description and send them to the appropriate branch. Bug fixes need a test that reproduces the issue and verifies the fix.
+- 改动属于 axios 的范畴。如果功能更适合放在用户代码或插件里,应尽早、友善地拒绝。
+- 在相关情况下,覆盖 XHR、Fetch、Node HTTP 三种适配器的行为。按能力探测,而不是按环境名称判断。
+- 公开 API 变化时,同时更新 `index.d.ts`(ESM)和 `index.d.cts`(CJS)。
+- 由 axios 产生的失败必须抛出带合适错误码的 `AxiosError`,绝不抛原始 `Error`。第三方错误用 `AxiosError.from` 包装。
+- 用单元测试覆盖改动。打包或运行时层面受影响时,同步更新 browser、smoke 或 module 测试套件。
+- 评审前 lint 和测试必须通过。不要合并挂红的 PR。
+- 未经讨论不要添加运行时依赖。`package-lock.json` 的改动必须保证 `lockfile-lint` 通过(npm HTTPS 主机、完整性哈希)。
+- 依赖包和 GitHub Actions 更新类 PR 仅限维护者/机器人提交。外部协作者只更新 npm 包、lockfile 或 GitHub Actions 版本的 PR 一律关闭。
+- 保留这些更新的 7 天 Dependabot 延迟。只有严重漏洞需要维护者手动更新时才可以绕过。
+- 安全敏感改动要接受更严格的审查,并补充针对性的回归测试。包括 URL 构造、重定向、代理/环境变量处理、XSRF、socket 路径、解压限制、原型链遍历以及各适配器。请参阅 [THREATMODEL.md](./THREATMODEL.md)。
+- 移除功能前先给出警告。
+- 新的公开 API 必须可预期、与现有选项风格一致,并且有文档。
+- PR 标题使用[约定式提交](https://www.conventionalcommits.org/)(`fix:`、`feat:`、`chore:`、`docs:` 等)。发布工具链依赖这一格式。
+- 说明改动属于 patch、minor 还是 breaking,并指向正确的分支(当前维护线为 `v1.x`;破坏性变更的工作去其他分支)。
 
-If changes are requested, address them promptly. If you cannot make the changes, say so clearly so someone else can pick them up.
+PR 合并前必须至少由一名维护者评审并批准。如果你不确定改动的影响,请征求第二意见。破坏性变更要在 PR 描述中明确指出,并提交到合适的分支。Bug 修复需要附带一个能复现问题并验证修复的测试。
+
+如果被要求修改,请尽快处理。如果你无法完成修改,请明确说明,以便他人接手。
 
 > [!IMPORTANT]
-> We wait up to 28 days for a response to requested changes before closing the PR as stale. After that, we will either address the issue in a maintainer-led PR or open an issue for other contributors. If the author wants to continue the work, they should recreate the PR from the latest version of the correct target branch, address all feedback, and request review from a maintainer.
+> 对于被要求修改的 PR,我们最多等待 28 天;逾期未响应将作为过期 PR 关闭。此后,我们要么通过维护者牵头的 PR 解决该问题,要么开一个 issue 交给其他贡献者。如果原作者想继续,应从正确目标分支的最新版本重新发起 PR,处理全部反馈,并请求维护者评审。
 
-## Security disclosures
+## 安全披露
 
-If someone reports a suspected vulnerability in a public issue, do not discuss specifics in the thread. Redirect them to the process described in [SECURITY.md](./SECURITY.md) (GitHub security advisories) and close or hide the issue as appropriate.
+如果有人在公开 issue 中报告疑似漏洞,不要在讨论串里讨论细节。请将其引导至 [SECURITY.md](./SECURITY.md) 所述流程(GitHub 安全通告),并视情况关闭或隐藏该 issue。
 
-## What collaborators should not do
+## 协作者不应做的事
 
-- Add runtime dependencies without discussion. The dependency surface is intentionally tiny.
-- Merge package, lockfile, or GitHub Actions version update PRs from outside collaborators.
-- Disable `ignore-scripts` in `.npmrc` or otherwise weaken install-time safety.
-- Weaken `beforeRedirect`, proxy, `socketPath`, XSRF, or prototype-pollution safeguards without tests covering the regression cases.
+- 未经讨论添加运行时依赖。依赖面是有意保持极小的。
+- 合并外部协作者提交的依赖包、lockfile 或 GitHub Actions 版本更新 PR。
+- 在 `.npmrc` 中禁用 `ignore-scripts`,或以其他方式削弱安装期安全。
+- 在没有回归测试覆盖的情况下削弱 `beforeRedirect`、代理、`socketPath`、XSRF 或原型污染防护。
 
 ---
 
-Thanks for helping keep axios healthy. If you are unsure about a call, ask another collaborator before acting. We would rather move a little slower than ship a regression. If you have questions about your role or responsibilities, contact the maintainers.
+感谢你帮助保持 axios 的健康运转。拿不准决定时,先询问其他协作者再行动。我们宁可慢一点,也不愿引入回归。如果你对自己的角色或职责有疑问,请联系维护者。

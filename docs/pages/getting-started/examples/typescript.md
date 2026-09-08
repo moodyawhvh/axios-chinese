@@ -1,17 +1,19 @@
-# TypeScript example
+> 🌐 本文档由 [axios/axios](https://github.com/axios/axios) 翻译,英文原版见原项目。
 
-## Importing types
+# TypeScript 示例
 
-axios ships with TypeScript definitions out of the box. You can import the types you need directly from `"axios"`:
+## 引入类型
+
+axios 开箱即附带 TypeScript 类型定义。你可以直接从 `"axios"` 引入所需的类型:
 
 ```ts
 import axios from "axios";
 import type { AxiosRequestConfig, AxiosResponse, AxiosError } from "axios";
 ```
 
-## Typing a request
+## 为请求标注类型
 
-Use a generic type parameter on the response to tell TypeScript what shape your data will have:
+通过响应上的泛型类型参数,告诉 TypeScript 你的数据是什么形状:
 
 ```ts
 import axios from "axios";
@@ -25,12 +27,12 @@ type Post = {
 
 const response = await axios.get<Post>("https://jsonplaceholder.typicode.com/posts/1");
 
-console.log(response.data.title); // TypeScript knows this is a string
+console.log(response.data.title); // TypeScript 知道这是 string 类型
 ```
 
-## Typing a function
+## 为函数标注类型
 
-Wrap requests in functions with explicit return types for maximum type safety:
+将请求封装进带显式返回类型的函数,获得最强的类型安全:
 
 ```ts
 import axios, { AxiosResponse } from "axios";
@@ -50,9 +52,9 @@ const getPost = async (id: number): Promise<Post> => {
 };
 ```
 
-## Typing a POST request
+## 为 POST 请求标注类型
 
-You can type both the request body and the expected response:
+可以同时为请求体和预期响应标注类型:
 
 ```ts
 type CreatePostBody = {
@@ -72,9 +74,9 @@ const createPost = async (data: CreatePostBody): Promise<CreatePostResponse> => 
 };
 ```
 
-## Typed axios instance
+## 带类型的 axios 实例
 
-Create a typed instance so your base URL and headers are baked in:
+创建一个带类型的实例,把 baseURL 和请求头固化进去:
 
 ```ts
 import axios from "axios";
@@ -86,9 +88,9 @@ const api: AxiosInstance = axios.create({
 });
 ```
 
-## Typed interceptors
+## 带类型的拦截器
 
-Use `InternalAxiosRequestConfig` (not `AxiosRequestConfig`) for request interceptors in v1.x:
+在 v1.x 中,请求拦截器要使用 `InternalAxiosRequestConfig`(而不是 `AxiosRequestConfig`):
 
 ```ts
 import axios from "axios";
@@ -105,9 +107,9 @@ api.interceptors.response.use(
 );
 ```
 
-## Typing errors
+## 为错误标注类型
 
-Use `axios.isAxiosError()` to narrow the type of a caught error:
+使用 `axios.isAxiosError()` 收窄捕获到的错误的类型:
 
 ```ts
 import axios, { AxiosError } from "axios";
@@ -121,7 +123,7 @@ try {
   await axios.get("/api/protected-resource");
 } catch (error) {
   if (axios.isAxiosError<ApiError>(error)) {
-    // error.response?.data is typed as ApiError
+    // error.response?.data 会被推断为 ApiError 类型
     console.error(error.response?.data.message);
     console.error(error.response?.status);
   } else {
@@ -130,10 +132,10 @@ try {
 }
 ```
 
-## TypeScript configuration notes
+## TypeScript 配置注意事项
 
-Because axios dual-publishes ESM and CJS, there are a few caveats depending on your setup:
+axios 同时发布 ESM 和 CJS 两种格式,不同配置下有几点需要注意:
 
-- The recommended setting is `"moduleResolution": "node16"` (implied by `"module": "node16"`). This requires TypeScript 4.7 or greater.
-- If you compile TypeScript to CJS and cannot use `"moduleResolution": "node16"`, enable `"esModuleInterop": true`.
-- If you use TypeScript to type-check CJS JavaScript code, your only option is `"moduleResolution": "node16"`.
+- 推荐设置 `"moduleResolution": "node16"`(`"module": "node16"` 会隐含它)。这要求 TypeScript 4.7 或更高版本。
+- 如果你把 TypeScript 编译为 CJS 且无法使用 `"moduleResolution": "node16"`,请启用 `"esModuleInterop": true`。
+- 如果你用 TypeScript 对 CJS JavaScript 代码做类型检查,唯一的选择是 `"moduleResolution": "node16"`。
