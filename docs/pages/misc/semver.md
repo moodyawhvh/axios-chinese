@@ -1,44 +1,46 @@
-# Semantic versioning
+> 🌐 本文档由 [axios/axios](https://github.com/axios/axios) 翻译,英文原版见原项目。
 
-Semantic versioning is a versioning scheme that is used to communicate the nature of changes in a software package. It is a simple set of rules and requirements that dictate how version numbers are assigned and incremented.
+# 语义化版本(Semantic Versioning)
 
-## axios versioning
+语义化版本是一种用于传达软件包变更性质的版本管理方案。它由一套简单的规则和要求组成,规定了版本号如何分配和递增。
 
-axios follows the semantic versioning scheme. This means that each version of axios is assigned a version number that consists of three parts: major, minor, and patch. The version number is incremented based on the nature of the changes in the release.
+## axios 的版本管理
 
-In the past axios may have at times not strictly followed semantic versioning, however going forward there will be a much stricter adherence to the semantic versioning scheme to ensure that users can rely on the version numbers to communicate the nature of changes in the library.
+axios 遵循语义化版本方案。这意味着 axios 的每个版本号都由三部分组成:主版本号(major)、次版本号(minor)和修订号(patch)。版本号会根据发布中变更的性质进行递增。
 
-A brief overview of the versioning scheme is provided below.
+过去 axios 有时可能没有严格遵守语义化版本,但从现在起会更加严格地遵循语义化版本方案,确保用户可以依靠版本号来了解这个库变更的性质。
 
-## Version format
+下面简要概述这套版本方案。
 
-A semantic version number consists of three parts:
+## 版本格式
 
-1. Major version
-2. Minor version
-3. Patch version
+一个语义化版本号由三部分组成:
 
-The version number is written as `MAJOR.MINOR.PATCH`. Each part of the version number has a specific meaning:
+1. 主版本号(Major)
+2. 次版本号(Minor)
+3. 修订号(Patch)
 
-- **Major version**: Incremented when you make incompatible API changes.
-- **Minor version**: Incremented when you add functionality in a backwards-compatible manner.
-- **Patch version**: Incremented when you make backwards-compatible bug fixes.
+版本号写作 `MAJOR.MINOR.PATCH`。每部分都有明确的含义:
 
-## Pre-release versions
+- **主版本号**:进行了不兼容的 API 变更时递增。
+- **次版本号**:以向后兼容的方式新增功能时递增。
+- **修订号**:进行向后兼容的缺陷修复时递增。
 
-In addition to the three parts of the version number, you can append a pre-release version. This is done by adding a hyphen and a series of dot-separated identifiers immediately following the patch version. For example, `1.0.0-alpha.1`.
+## 预发布版本
 
-Pre-release versions are used to indicate that a version is unstable and might not satisfy the intended compatibility requirements as denoted by the version number. Pre-release versions are ordered based on the order of the identifiers. For example, `1.0.0-alpha.1` comes before `1.0.0-alpha.2`.
+除了版本号的三个部分之外,还可以附加预发布版本号。做法是在修订号后面紧跟一个连字符和一串以点分隔的标识符,例如 `1.0.0-alpha.1`。
 
-## Version ranges
+预发布版本用于表示该版本不稳定,可能无法满足版本号所标示的兼容性要求。预发布版本按标识符的先后顺序排序,例如 `1.0.0-alpha.1` 排在 `1.0.0-alpha.2` 之前。
 
-When you specify a version range for a package, you can use a variety of operators to specify the range of versions that are acceptable. The following operators are available:
+## 版本范围
 
-- `>`: Greater than
-- `<`: Less than
-- `>=`: Greater than or equal to
-- `<=`: Less than or equal to
-- `~`: Approximately equal to
-- `^`: Compatible with
+为依赖包指定版本范围时,可以使用多种运算符来表示可接受的版本区间。可用运算符如下:
 
-For example, `^1.0.0` means that any version greater than or equal to `1.0.0` and less than `2.0.0` is acceptable.
+- `>`:大于
+- `<`:小于
+- `>=`:大于等于
+- `<=`:小于等于
+- `~`:约等于
+- `^`:兼容版本
+
+例如,`^1.0.0` 表示任何大于等于 `1.0.0` 且小于 `2.0.0` 的版本都可以接受。

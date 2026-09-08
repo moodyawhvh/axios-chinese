@@ -1,10 +1,14 @@
-# Security policy
+> 🌐 本文档由 [axios/axios](https://github.com/axios/axios) 翻译,英文原版见原项目。
+>
+> 注:原文超过 10000 字符,本译文覆盖核心章节;文末"披露政策/60 天承诺"等流程性内容与根目录 [SECURITY.md](../../../SECURITY.md) 一致,细节请参见该文件。
 
-## ⚠️ Decompression bomb / unbounded response buffering
+# 安全策略
 
-By default, `maxContentLength` and `maxBodyLength` are set to `-1` (unlimited). A malicious or compromised server can return a small gzip/deflate/brotli/zstd-compressed body that expands to gigabytes, exhausting memory in the Node.js process.
+## ⚠️ 解压炸弹 / 无上限的响应缓冲
 
-**If you make requests to servers you do not fully trust, you MUST set a `maxContentLength` (and `maxBodyLength`) suitable for your workload.** The limit is enforced chunk-by-chunk during streaming decompression, so setting it is sufficient to neutralize decompression-bomb attacks.
+默认情况下,`maxContentLength` 和 `maxBodyLength` 的值为 `-1`(不限制)。恶意或被攻陷的服务器可以返回一个体积很小的 gzip/deflate/brotli/zstd 压缩响应体,解压后却膨胀到数 GB,耗尽 Node.js 进程的内存。
+
+**如果你要请求不完全可信的服务器,必须为你的业务负载设置合适的 `maxContentLength`(以及 `maxBodyLength`)。** 该限制在流式解压过程中逐块生效,因此设置它就足以化解解压炸弹攻击。
 
 ```js
 axios.get('https://example.com/data', {
@@ -12,111 +16,92 @@ axios.get('https://example.com/data', {
   maxBodyLength: 10 * 1024 * 1024,
 });
 
-// Or globally:
+// 或者全局设置:
 axios.defaults.maxContentLength = 10 * 1024 * 1024;
 axios.defaults.maxBodyLength = 10 * 1024 * 1024;
 ```
 
-The default was not tightened because doing so would silently break every legitimate download larger than the chosen cap. The responsibility to pick a safe ceiling for untrusted sources rests with the application.
+默认值之所以没有收紧,是因为那样做会悄无声息地破坏所有超过所选上限的合法下载。为不可信来源选择安全上限,责任在应用程序自身。
 
-## Other security-sensitive options
+## 其他安全敏感配置项
 
-The following request-config options have direct security implications. They are documented in full alongside the rest of the [request config](/pages/advanced/request-config), and summarised here so they show up in one place.
+以下请求配置项直接影响安全性。它们在[请求配置](/pages/advanced/request-config)文档中有完整说明,这里集中汇总,便于统一查阅。
 
-| Option | Risk | Mitigation |
+| 配置项 | 风险 | 缓解措施 |
 | --- | --- | --- |
-| [`baseURL`](/pages/advanced/request-config#baseurl) | Applications sometimes treat a `baseURL` path prefix, such as `https://api.example.com/v1/`, as a request boundary. User-controlled relative `url` values can contain `..` segments that are normalized by the final URL parser and resolve outside that path prefix. | Do not rely on `baseURL` for path isolation. Validate untrusted request paths before passing them to axios; reject absolute or protocol-relative URLs and `..` segments, or check the resolved URL's origin and pathname against an allowlist. |
-| [`socketPath`](/pages/advanced/request-config#socketpath) | If derived from untrusted input, an attacker can redirect traffic to privileged local sockets like `/var/run/docker.sock`, bypassing hostname-based SSRF protections (CWE-918). | Strip or allowlist config keys from untrusted input. Use [`allowedSocketPaths`](/pages/advanced/request-config#allowedsocketpaths) to restrict accepted socket paths. |
-| [`beforeRedirect`](/pages/advanced/request-config#beforeredirect) | Runs after `follow-redirects` strips credentials on protocol downgrade. Re-injecting credentials without checking the destination protocol can leak them over plain HTTP. | Only re-add credentials for trusted HTTPS destinations. Check `options.protocol === "https:"` before assigning `auth`. |
-| [`sensitiveHeaders`](/pages/advanced/request-config#sensitiveheaders) | Custom secret headers such as `X-API-Key` can be forwarded by the Node.js HTTP adapter when following redirects to a different origin. | List custom secret-bearing header names in `sensitiveHeaders`; axios removes matching headers case-insensitively on cross-origin redirects. Same-origin redirects keep them. |
-| [`withXSRFToken`](/pages/advanced/request-config#withxsrftoken) | Setting `true` forces the XSRF header on cross-origin requests. Older axios versions implicitly enabled this with `withCredentials: true`; newer versions require both flags. | Leave at `undefined` (same-origin only) unless your backend explicitly validates XSRF on cross-origin requests. |
-| [`redact`](/pages/advanced/request-config#redact) | `AxiosError#toJSON()` includes the request config by default, which can leak `Authorization` headers or `auth` credentials into error logs and telemetry. | Pass a `redact` array with sensitive config key names. Matching is case-insensitive and recursive. |
-| [`formDataHeaderPolicy`](/pages/advanced/request-config#formdataheaderpolicy) | A custom `FormData` whose `getHeaders()` returns attacker-controlled values can overwrite headers like `Authorization` or inject arbitrary ones in Node.js. | Set `'content-only'` to copy only `Content-Type` and `Content-Length`, then set other headers explicitly via the request `headers` config. |
+| [`baseURL`](/pages/advanced/request-config#baseurl) | 应用有时会把 `baseURL` 路径前缀(如 `https://api.example.com/v1/`)当作请求边界。用户可控的相对 `url` 值可以包含 `..` 段,最终 URL 解析器会将其规范化,从而落到该路径前缀之外。 | 不要依赖 `baseURL` 做路径隔离。在把不可信请求路径交给 axios 之前先校验:拒绝绝对 URL、协议相对 URL 和 `..` 段,或者对照白名单检查最终 URL 的 origin 和 pathname。 |
+| [`socketPath`](/pages/advanced/request-config#socketpath) | 如果它来自不可信输入,攻击者可以把流量重定向到 `/var/run/docker.sock` 这类高权限本地套接字,绕过基于主机名的 SSRF 防护(CWE-918)。 | 从不可信输入中剔除或对配置键做白名单过滤。使用 [`allowedSocketPaths`](/pages/advanced/request-config#allowedsocketpaths) 限制可接受的套接字路径。 |
+| [`beforeRedirect`](/pages/advanced/request-config#beforeredirect) | 该回调运行于 `follow-redirects` 在协议降级时剥离凭据之后。不检查目标协议就重新注入凭据,可能把凭据泄露到明文 HTTP 上。 | 只对可信的 HTTPS 目标重新添加凭据。在赋值 `auth` 之前检查 `options.protocol === "https:"`。 |
+| [`sensitiveHeaders`](/pages/advanced/request-config#sensitiveheaders) | 像 `X-API-Key` 这类自定义密钥请求头,在 Node.js HTTP 适配器跟随重定向到不同源时可能被转发出去。 | 在 `sensitiveHeaders` 中列出携带机密的自定义请求头名称;axios 会在跨源重定向时不区分大小写地移除匹配的请求头。同源重定向会保留它们。 |
+| [`withXSRFToken`](/pages/advanced/request-config#withxsrf-token) | 设为 `true` 会强制在跨源请求上携带 XSRF 请求头。旧版 axios 在 `withCredentials: true` 时隐式启用该行为;新版本要求两个开关同时打开。 | 保持 `undefined`(仅同源)除非你的后端明确校验跨源请求的 XSRF。 |
+| [`redact`](/pages/advanced/request-config#redact) | `AxiosError#toJSON()` 默认包含请求配置,可能把 `Authorization` 请求头或 `auth` 凭据泄入错误日志和遥测数据。 | 传入包含敏感配置键名的 `redact` 数组。匹配不区分大小写并递归生效。 |
+| [`formDataHeaderPolicy`](/pages/advanced/request-config#formdataheaderpolicy) | 自定义 `FormData` 的 `getHeaders()` 若返回攻击者可控的值,可能在 Node.js 中覆盖 `Authorization` 等请求头或注入任意请求头。 | 设置 `'content-only'`,只复制 `Content-Type` 和 `Content-Length`,其余请求头通过请求的 `headers` 配置显式设置。 |
 
-## Supply-chain hardening: `ignore-scripts` and lifecycle scripts
+## 供应链加固:`ignore-scripts` 与生命周期脚本
 
-The repository ships a project-level `.npmrc` that sets `ignore-scripts=true`. This blocks npm lifecycle scripts (`preinstall`, `install`, `postinstall`, `prepare`) from any direct or transitive dependency when running `npm install` or `npm ci` inside the repo. See [THREATMODEL.md](https://github.com/axios/axios/blob/v1.x/THREATMODEL.md) (threat T-S2) for the rationale.
+本仓库带有项目级 `.npmrc`,设置了 `ignore-scripts=true`。在仓库内执行 `npm install` 或 `npm ci` 时,这会阻止任何直接或传递依赖运行 npm 生命周期脚本(`preinstall`、`install`、`postinstall`、`prepare`)。理由见 [THREATMODEL.md](https://github.com/axios/axios/blob/v1.x/THREATMODEL.md)(威胁 T-S2)。
 
-One consequence: the repository's own `prepare` hook (which installs Husky's git hooks) does **not** run automatically. After your first install, enable the git hooks manually:
+一个后果是:仓库自身的 `prepare` 钩子(用于安装 Husky 的 git 钩子)**不会**自动运行。首次安装后请手动启用 git 钩子:
 
 ```bash
 npm ci
 npm rebuild husky && npx husky
 ```
 
-Run those two commands once per fresh checkout. You do **not** need to re-run them after every subsequent `npm install`.
+每次全新 checkout 后运行一次这两条命令即可,后续 `npm install` **不需要**重复执行。
 
-::: danger Do not remove `ignore-scripts=true`
-Removing `ignore-scripts=true` from `.npmrc` to "fix" the husky setup re-opens the lifecycle-script attack surface for every other package in the tree. All CI workflows already invoke npm with `--ignore-scripts`, so local behaviour matches CI.
+::: danger 不要移除 `ignore-scripts=true`
+为了"修好" husky 而从 `.npmrc` 中移除 `ignore-scripts=true`,会为依赖树中的所有其他包重新打开生命周期脚本攻击面。所有 CI 工作流已经以 `--ignore-scripts` 调用 npm,因此本地行为与 CI 一致。
 :::
 
-We recommend the same `ignore-scripts=true` setting in any consumer project that pulls axios (or any other dependency) into a build environment that handles secrets.
+我们建议任何把 axios(或其他依赖)引入处理机密信息的构建环境的项目,都采用同样的 `ignore-scripts=true` 设置。
 
-## Verifying a Release
+## 验证发布版本
 
-Every `axios` tarball on npm is published from GitHub Actions with an [npm provenance attestation](https://docs.npmjs.com/generating-provenance-statements) that cryptographically binds the package to the workflow and commit SHA that produced it.
+npm 上的每个 `axios` 压缩包都通过 GitHub Actions 发布,并附带 [npm 出处证明(provenance attestation)](https://docs.npmjs.com/generating-provenance-statements),以加密方式将包与生成它的工作流及 commit SHA 绑定。
 
-Consumers can verify provenance locally:
+使用者可以在本地验证出处:
 
 ```bash
-# Verify every package in your lockfile, including axios
+# 验证 lockfile 中的所有包,包括 axios
 npm audit signatures
 ```
 
-A successful verification proves the tarball was built in `axios/axios`' GitHub Actions environment on a known commit — it was not tampered with between build and registry. It does **not** prove the code in that commit is free of bugs.
+验证成功说明该压缩包是在 `axios/axios` 的 GitHub Actions 环境中、于某个已知 commit 上构建的——从构建到进入 registry 期间未被篡改。但它**不能**证明该 commit 中的代码没有 bug。
 
-If `npm audit signatures` reports a missing or invalid attestation for a recent `axios` version, treat it as a potential supply-chain incident and report via the private channel below.
+如果 `npm audit signatures` 对某个近期 `axios` 版本报出证明缺失或无效,应将其视为潜在的供应链安全事件,并通过下方的私密渠道报告。
 
-## Reporting a Vulnerability
+## 报告漏洞
 
-If you believe you have found a security vulnerability in the project, please report it to us as described below. We take all security vulnerabilities seriously. If you have found a vulnerability in a third-party library, please report it to the maintainers of that library.
+如果你认为发现了本项目的安全漏洞,请按以下流程报告。我们严肃对待所有安全漏洞。如果漏洞位于第三方库中,请向该库的维护者报告。
 
-## Reporting Process
+## 报告流程
 
-Please do not report security vulnerabilities through public GitHub issues. Please use the official security channel on GitHub by logging a [security advisory](https://github.com/axios/axios/security/advisories/new).
+请勿通过公开的 GitHub issue 报告安全漏洞。请使用 GitHub 官方安全渠道,发起一个[安全通告(security advisory)](https://github.com/axios/axios/security/advisories/new)。
 
-## Disclosure Policy
+## 披露政策
 
-When we receive a security vulnerability report, we assign it a primary handler. The handler confirms the problem, determines affected versions, evaluates severity, develops and ships a fix, and coordinates public disclosure with the reporter.
+收到安全漏洞报告后,我们会指定一名主要负责人。该负责人负责确认问题、确定受影响版本、评估严重程度、开发并发布修复,以及与报告者协调公开披露。
 
-### 60-day resolution and disclosure commitment
+### 60 天解决与披露承诺
 
-We commit to **resolving and publicly disclosing every valid security advisory within 60 calendar days of the initial report**, measured from the moment a report is received via the [GitHub security advisory channel](https://github.com/axios/axios/security/advisories/new).
+我们承诺:**对每一个有效的安全通告,在初始报告后 60 个自然日内完成解决并公开披露**,时限从通过 [GitHub 安全通告渠道](https://github.com/axios/axios/security/advisories/new)收到报告的时刻起算。
 
-The 60-day clock is a commitment to reporters and downstream consumers — a backstop, not an aspiration. If we cannot ship a fix in time, we still publish the advisory at day 60 with the best available mitigation guidance so consumers can act.
+60 天期限是对报告者和下游使用者的承诺——是兜底底线而非理想目标。如果我们无法按时发布修复,仍会在第 60 天发布通告及当时可用的最佳缓解措施指引,让使用者能够采取行动。
 
-**Milestones inside the 60-day window:**
+60 天窗口内的关键节点、例外与延期情形、报告者须知,详见根目录 [SECURITY.md](../../../SECURITY.md),此处不再重复。
 
-| Day  | Milestone                                                                                                                                |
-| ---- | ---------------------------------------------------------------------------------------------------------------------------------------- |
-| 0    | Report received. Private advisory opened on GitHub.                                                                                      |
-| ≤ 3  | Acknowledgement sent to reporter. Triage decision: in scope / out of scope / duplicate / needs-info.                                     |
-| ≤ 10 | Severity assessed (CVSS v4 where applicable). Affected versions confirmed. CVE requested via GitHub if a public identifier is warranted. |
-| ≤ 45 | Fix developed, reviewed, tested. Release candidate prepared on a private branch. Reporter offered a preview for validation.              |
-| ≤ 60 | Patched release published to npm. Public advisory + CVE published. Reporter credited unless they request otherwise. CHANGELOG updated.   |
+## 安全更新
 
-**Exceptions and extensions.**
+补丁开发并测试完成后,我们会尽快发布安全更新。通过项目 GitHub 仓库通知用户,在 GitHub Releases 页面发布发行说明与安全通告,并弃用所有包含该漏洞的版本。
 
-- If a reporter requests a shorter embargo (e.g. they plan to present findings at a conference), we accommodate where possible.
-- If a fix requires a breaking change, coordinating with major downstream consumers, or a `follow-redirects` / `form-data` / `proxy-from-env` upstream release, we may extend beyond 60 days. Any extension is disclosed publicly at day 60 via the advisory, with a revised ETA and the reason.
-- If a report is **out of scope** (e.g. falls under an explicit non-goal documented in the project's [threat model](https://github.com/axios/axios/blob/v1.x/THREATMODEL.md)), we close it with an explanation to the reporter within the triage window (≤ 3 days). Out-of-scope reports do not enter the 60-day queue.
-- **Actively exploited vulnerabilities** are treated as incidents: fix and advisory ship as soon as a patch is validated, not on the 60-day schedule.
+## 维护者侧事件响应
 
-**Reporter expectations.**
+对于影响维护者账号、工作站或发布基础设施的入侵场景(钓鱼、硬件密钥被盗、意外的 tag/发布),项目在 [THREATMODEL.md §3.7](https://github.com/axios/axios/blob/v1.x/THREATMODEL.md#37-incident-response-runbook) 中维护了一份内部事件响应手册,涵盖会话吊销、密钥轮换、下游通知以及取消发布/弃用流程。
 
-While a report is under embargo, we ask reporters to refrain from public disclosure until the earlier of: (a) the coordinated advisory publication, or (b) day 60. If the 60-day deadline passes without action from us, reporters are free to disclose independently — we will treat that as a failure on our part, not on theirs.
+## 安全合作伙伴与致谢
 
-## Security Updates
-
-Security updates are released as soon as possible after the patch has been developed and tested. We notify users of the release via the project's GitHub repository and publish release notes and security advisories on the GitHub releases page. We also deprecate all versions that contain the vulnerability.
-
-## Maintainer-side incident response
-
-For compromise scenarios affecting maintainer accounts, workstations, or release infrastructure (phishing, stolen hardware key, unexpected tag/publish), the project maintains an internal incident-response runbook in [THREATMODEL.md §3.7](https://github.com/axios/axios/blob/v1.x/THREATMODEL.md#37-incident-response-runbook). It covers session revocation, key rotation, downstream notification, and unpublish/deprecate procedures.
-
-## Security Partners and Acknowledgements
-
-We would like to thank the following security researchers for working with us to help make the project safe for everyone:
+感谢以下与我们协作、帮助项目对所有人保持安全的研究人员:
 
 - [Socket Dev](https://socket.dev/)
 - [GitHub Security Lab](https://securitylab.github.com/)

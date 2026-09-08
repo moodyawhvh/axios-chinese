@@ -3,6 +3,8 @@ layout: page
 search: false
 ---
 
+> 🌐 本文档由 [axios/axios](https://github.com/axios/axios) 翻译,英文原版见原项目。
+
 <script setup>
 import allSponsors from '../../data/sponsors.json';
 
@@ -14,8 +16,8 @@ const capitalizeFirstLetter = (word) => {
 </script>
 
 <div style="margin: 1rem 7rem; max-width: 1200px;">
-  <h1 style="line-height: 64px; font-size: 32px; letter-spacing: -0.4px; font-weight: 600; margin-top: 2rem;">Sponsors</h1>
-  <p>Axios is supported by the following organizations. If you'd like to sponsor Axios, please see our <a href="https://opencollective.com/axios" target="_blank" style="color: #007bff;">open collective page</a> for more information.</p>
+  <h1 style="line-height: 64px; font-size: 32px; letter-spacing: -0.4px; font-weight: 600; margin-top: 2rem;">赞助商</h1>
+  <p>axios 由以下组织提供支持。如果你想赞助 axios,请访问我们的 <a href="https://opencollective.com/axios" target="_blank" style="color: #007bff;">Open Collective 页面</a>了解更多信息。</p>
 
   <div :class="$style.sponsorCloudWrapper">
     <div :class="$style.sponsorCloudContainer">
