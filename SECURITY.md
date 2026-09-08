@@ -1,76 +1,78 @@
-# Security policy
+> 🌐 本文档由 [axios/axios](https://github.com/axios/axios) 翻译,英文原版见原项目。
 
-## Supported versions
+# 安全策略
 
-The maintainers provide security updates for these versions:
+## 支持的版本
 
-| Version | Supported          |
+维护者为以下版本提供安全更新:
+
+| 版本   | 支持状态           |
 | ------- | ------------------ |
 | 0.x.x   | :white_check_mark: |
 | 1.x.x   | :white_check_mark: |
 
-## Threat model
+## 威胁模型
 
-For details about the runtime attack surface, supply chain security, and development environment security, see [THREATMODEL.md](THREATMODEL.md). Researchers should read it before reporting. It documents what is in scope, what is an explicit non-goal, and where known gaps remain.
+关于运行时攻击面、供应链安全以及开发环境安全的详细信息,请参阅 [THREATMODEL.md](THREATMODEL.md)。安全研究人员在提交报告前应先阅读该文档。其中说明了哪些内容在范围内、哪些被明确列为非目标,以及目前仍存在的已知缺口。
 
-The maintainer incident-response runbook, including session revocation, key rotation, and notification steps, is in [THREATMODEL.md §3.7](THREATMODEL.md#37-incident-response-runbook).
+维护者的事件响应手册(包括会话吊销、密钥轮换和通知步骤)见 [THREATMODEL.md §3.7](THREATMODEL.md#37-incident-response-runbook)。
 
-## Verifying a release
+## 验证发布版本
 
-`axios` tarballs on npm are published from GitHub Actions with an [npm provenance attestation](https://docs.npmjs.com/generating-provenance-statements) that cryptographically binds the package to the workflow and commit SHA that produced it. Attestation became the default at **v1.6.1** (1.x line) and **v0.31.0** (0.x line); releases before those points generally have none. A few releases are exceptions to that rule:
+npm 上的 `axios` 压缩包通过 GitHub Actions 发布,并附带 [npm 出处证明(provenance attestation)](https://docs.npmjs.com/generating-provenance-statements),以加密方式将包与生成它的工作流及 commit SHA 绑定。自 **v1.6.1**(1.x 系列)和 **v0.31.0**(0.x 系列)起,出处证明成为默认配置;在此之前发布的版本一般没有证明。少数版本属于例外:
 
-- **v0.28.0** and **v0.28.1** carry an attestation even though they predate the 0.x default.
-- **v1.13.3** (1.x line) and **v0.29.0** through **v0.30.3** (0.x line) were published *without* one.
+- **v0.28.0** 和 **v0.28.1** 虽然早于 0.x 系列的默认启用时间,但带有出处证明。
+- **v1.13.3**(1.x 系列)以及 **v0.29.0** 至 **v0.30.3**(0.x 系列)发布时*没有*证明。
 
-Consumers can verify provenance locally:
+使用者可以在本地验证出处:
 
 ```bash
-# Verify every package in your lockfile, including axios
+# 验证 lockfile 中的所有包,包括 axios
 npm audit signatures
 ```
 
-A successful verification proves the tarball was built in the `axios/axios` GitHub Actions environment on a known commit. It was not tampered with between build and registry. It does not prove the code in that commit is free of bugs.
+验证成功说明该压缩包是在 `axios/axios` 的 GitHub Actions 环境中、于某个已知 commit 上构建的,且从构建到进入 registry 期间未被篡改。它并不能证明该 commit 中的代码没有 bug。
 
-If `npm audit signatures` reports a missing or invalid attestation for an `axios` version listed above as attested, treat it as a potential supply-chain incident and report via the private channel below.
+如果 `npm audit signatures` 对上述标注为"有证明"的某个 `axios` 版本报出证明缺失或无效,应将其视为潜在的供应链安全事件,并通过下方的私密渠道报告。
 
-## Reporting a vulnerability
+## 报告漏洞
 
-If you believe you have found a security vulnerability in axios, report it through the private channel below. If the vulnerability is in a third-party library, report it to that library's maintainers.
+如果你认为发现了 axios 的安全漏洞,请通过下方的私密渠道报告。如果漏洞位于第三方库中,请向该库的维护者报告。
 
-## Reporting process
+## 报告流程
 
-Do not report security vulnerabilities through public GitHub issues. Use GitHub's private security channel by opening a [security advisory](https://github.com/axios/axios/security).
+请勿通过公开的 GitHub issue 报告安全漏洞。请使用 GitHub 的私密安全渠道,发起一个[安全通告(security advisory)](https://github.com/axios/axios/security)。
 
-## Disclosure policy
+## 披露政策
 
-When we receive a security vulnerability report, we assign it a primary handler. The handler confirms the problem, determines affected versions, evaluates severity, develops and ships a fix, and coordinates public disclosure with the reporter.
+收到安全漏洞报告后,我们会指定一名主要负责人。该负责人负责确认问题、确定受影响版本、评估严重程度、开发并发布修复,以及与报告者协调公开披露。
 
-### 60-day resolution and disclosure commitment
+### 60 天解决与披露承诺
 
-We commit to resolving and publicly disclosing every valid security advisory within 60 calendar days of the initial report, measured from the moment a report is received through the [GitHub security advisory channel](https://github.com/axios/axios/security/advisories/new).
+我们承诺:对每一个有效的安全通告,在初始报告(以通过 [GitHub 安全通告渠道](https://github.com/axios/axios/security/advisories/new)收到报告的时刻起算)后的 60 个自然日内完成解决并公开披露。
 
-The 60-day clock is a commitment to reporters and downstream consumers. It is a backstop, not an aspiration. If we cannot ship a fix in time, we still publish the advisory at day 60 with mitigation guidance so consumers can act. We then keep working on the fix and update the advisory with patch details when they are ready.
+60 天期限是对报告者和下游使用者的承诺,是兜底底线而非理想目标。如果我们无法按时发布修复,仍会在第 60 天发布通告及缓解措施指引,让使用者能够采取行动;随后我们继续完善修复,并在就绪后更新通告中的补丁细节。
 
-We release the fix separately from the advisory, but we do not delay the advisory beyond day 60. We try to release the fix before publishing the advisory so users can patch before vulnerability details are public.
+修复与通告可以分开发布,但通告不会推迟到第 60 天之后。我们会尽量在发布通告之前先发布修复,让用户能在漏洞细节公开前完成加固。
 
-Exceptions and extensions:
+例外与延期情形:
 
-- If a reporter requests a shorter embargo (e.g. they plan to present findings at a conference), we accommodate where possible.
-- If a fix requires a breaking change, coordinating with major downstream consumers, or a `follow-redirects` / `form-data` / `proxy-from-env` upstream release, we may extend beyond 60 days. Any extension is disclosed publicly at day 60 via the advisory, with a revised ETA and the reason.
-- If a report turns out to be out of scope (e.g. falls under an explicit non-goal in [THREATMODEL.md §2.6](THREATMODEL.md)), we close it with an explanation to the reporter within the triage window (≤ 3 days). Out-of-scope reports do not enter the 60-day queue.
-- Actively exploited vulnerabilities are treated as incidents. The fix and advisory ship as soon as a patch is validated, not on the 60-day schedule.
+- 如果报告者要求缩短 embargo 期(例如计划在会议上公开研究成果),我们会在可能范围内配合。
+- 如果修复涉及破坏性变更、需要与主要下游使用者协调,或依赖 `follow-redirects` / `form-data` / `proxy-from-env` 的上游发版,我们可能将期限延长至 60 天以后。任何延期都会在第 60 天通过通告公开说明,并给出修订后的预计时间及原因。
+- 如果报告被认定超出范围(例如属于 [THREATMODEL.md §2.6](THREATMODEL.md) 中明确列出的非目标),我们会在分类处理窗口(≤ 3 天)内向报告者说明并关闭。超出范围的报告不进入 60 天处理队列。
+- 正在被在野利用的漏洞按安全事件处理:补丁一经验证即随通告发布,不按 60 天日程执行。
 
-Reporter expectations:
+对报告者的期望:
 
-While a report is under embargo, we ask reporters not to disclose it publicly until the earlier of the coordinated advisory publication or day 60. If the 60-day deadline passes without action from us, reporters are free to disclose independently. We treat that as a failure on our part, not on theirs.
+在 embargo 期内,我们请报告者在"协同通告发布"与"第 60 天"两者中较早的时刻之前不要公开披露。如果 60 天期满而我们毫无动作,报告者可自行独立披露。我们会将此视为我们的失职,而非报告者的问题。
 
-## Security updates
+## 安全更新
 
-We release security updates after the patch is developed and tested. We notify users through the project's GitHub repository, publish release notes and security advisories on GitHub releases, and deprecate all versions that contain the vulnerability.
+我们在补丁开发并测试完成后再发布安全更新。我们会通过项目 GitHub 仓库通知用户,在 GitHub Releases 上发布发行说明与安全通告,并弃用所有包含该漏洞的版本。
 
-## Security partners and acknowledgements
+## 安全合作伙伴与致谢
 
-Thanks to these security researchers for working with us:
+感谢以下与我们协作的安全研究人员:
 
 - [Socket Dev](https://socket.dev/)
 - [GitHub Security Lab](https://securitylab.github.com/)

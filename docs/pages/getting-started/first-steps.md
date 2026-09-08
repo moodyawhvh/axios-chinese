@@ -1,66 +1,68 @@
-# First steps
+> 🌐 本文档由 [axios/axios](https://github.com/axios/axios) 翻译,英文原版见原项目。
 
-Welcome to the axios documentation! This guide will help you get started with axios and make your first API request. If you're new to axios, we recommend starting here.
+# 起步
 
-## Installing
+欢迎来到 axios 文档!本指南将帮助你快速上手 axios,并发出第一个 API 请求。如果你刚接触 axios,建议从这里开始阅读。
 
-You can use axios in your project in a few different ways. The most common way is to install it from npm and include it in your project. But we also support jsDelivr, unpkg, and more.
+## 安装
 
-#### Using npm
+你可以通过多种方式在项目中使用 axios。最常见的方式是通过 npm 安装并引入项目。此外,我们还支持 jsDelivr、unpkg 等方式。
+
+#### 使用 npm
 
 ```bash
 npm install axios
 ```
 
-#### Using pnpm
+#### 使用 pnpm
 
 ```bash
 pnpm install axios
 ```
 
-#### Using yarn
+#### 使用 yarn
 
 ```bash
 yarn add axios
 ```
 
-#### Using bun
+#### 使用 bun
 
 ```bash
 bun add axios
 ```
 
-#### Using deno
+#### 使用 deno
 
 ```bash
 deno install npm:axios
 ```
 
-#### Using jsDelivr
+#### 使用 jsDelivr
 
-When using jsDelivr we recommend using the minified version as well as pinning the version number to avoid unexpected changes. If you would like to use the latest version you can do so by dropping the version number. This is strongly discouraged for production use as it can lead to unexpected changes in your application.
+使用 jsDelivr 时,建议使用压缩版并固定版本号,以避免意料之外的变动。如果你想使用最新版本,可以去掉版本号,但强烈不建议在生产环境这样做,因为可能给你的应用带来不可预期的变化。
 
 ```html
 <script src="https://cdn.jsdelivr.net/npm/axios@<x.x.x>/dist/axios.min.js"></script>
 ```
 
-#### Using unpkg
+#### 使用 unpkg
 
-When using unpkg we recommend using the minified version as well as pinning the version number to avoid unexpected changes. If you would like to use the latest version you can do so by dropping the version number. This is strongly discouraged for production use as it can lead to unexpected changes in your application.
+使用 unpkg 时,同样建议使用压缩版并固定版本号,以避免意料之外的变动。如果想使用最新版本,可以去掉版本号,但强烈不建议在生产环境这样做,因为可能给你的应用带来不可预期的变化。
 
 ```html
 <script src="https://unpkg.com/axios@<x.x.x>/dist/axios.min.js"></script>
 ```
 
-## Importing axios
+## 引入 axios
 
-Once installed, you can import the library using either `import` or `require`:
+安装完成后,你可以使用 `import` 或 `require` 引入该库:
 
 ```js
 import axios, { isCancel, AxiosError } from "axios";
 ```
 
-You can also use the default export, since the named export is just a re-export from the axios factory:
+也可以只使用默认导出,因为命名导出本质上只是 axios 工厂函数的再导出:
 
 ```js
 import axios from "axios";
@@ -68,7 +70,7 @@ import axios from "axios";
 console.log(axios.isCancel("something"));
 ```
 
-If you use `require` for importing, **only the default export is available**:
+如果你使用 `require` 引入,**则只有默认导出可用**:
 
 ```js
 const axios = require("axios");
@@ -76,22 +78,22 @@ const axios = require("axios");
 console.log(axios.isCancel("something"));
 ```
 
-For some bundlers and ES6 linters you may need:
+某些打包器和 ES6 lint 工具可能需要这样写:
 
 ```js
 import { default as axios } from "axios";
 ```
 
-For custom or legacy environments where module resolution misbehaves, you can import the prebuilt bundle directly:
+对于模块解析行为异常的自定义或遗留环境,你可以直接引入预构建的 bundle:
 
 ```js
-const axios = require("axios/dist/browser/axios.cjs"); // browser CommonJS bundle (ES2017)
-// const axios = require("axios/dist/node/axios.cjs"); // node CommonJS bundle (ES2017)
+const axios = require("axios/dist/browser/axios.cjs"); // 浏览器 CommonJS bundle(ES2017)
+// const axios = require("axios/dist/node/axios.cjs"); // Node CommonJS bundle(ES2017)
 ```
 
-## Making your first request
+## 发出第一个请求
 
-An axios request can be made in as few as two lines of code. Making your first request with axios is very simple. You can make a request to any API by providing the URL and method. For example, to make a GET request to the JSONPlaceholder API, you can use the following code:
+一个 axios 请求最少只需要两行代码。用 axios 发出第一个请求非常简单:只要提供 URL 和请求方法,就可以请求任何 API。例如,向 JSONPlaceholder API 发送一个 GET 请求:
 
 ```js
 import axios from "axios";
@@ -103,20 +105,20 @@ const response = await axios.get(
 console.log(response.data);
 ```
 
-axios provides a simple API for making requests. You can use the `axios.get` method to make a GET request, the `axios.post` method to make a POST request, and so on. You can also use the `axios.request` method to make a request with any method.
+axios 提供了一套简洁的请求 API:使用 `axios.get` 方法发送 GET 请求,使用 `axios.post` 方法发送 POST 请求,依此类推。你也可以使用 `axios.request` 方法以任意方法发起请求。
 
-::: tip Set a timeout in production
-Without a `timeout`, a stalled request can hang indefinitely. Pass one via the request config:
+::: tip 在生产环境中设置超时
+如果不设置 `timeout`,一个停滞的请求可能无限挂起。请通过请求配置传入超时:
 
 ```js
 const response = await axios.get("https://example.com/data", {
-  timeout: 5000, // 5 seconds
+  timeout: 5000, // 5 秒
 });
 ```
 
-See [`timeout` in the request config](/pages/advanced/request-config#timeout) and [Error handling](/pages/advanced/error-handling) for the matching `ECONNABORTED` / `ETIMEDOUT` codes.
+对应的 `ECONNABORTED` / `ETIMEDOUT` 错误码可参见[请求配置中的 `timeout`](/pages/advanced/request-config#timeout) 与[错误处理](/pages/advanced/error-handling)。
 :::
 
-## Next steps
+## 下一步
 
-Now that you've made your first request with axios, you're ready to start exploring the rest of the axios documentation. You can learn more about making requests, handling responses, and using axios in your projects. Check out the rest of the documentation to learn more.
+现在已经发出了第一个 axios 请求,接下来可以继续探索 axios 文档的其余内容:学习如何发请求、处理响应,以及如何在你的项目中使用 axios。请查阅其余文档以了解更多。
