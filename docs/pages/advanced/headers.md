@@ -1,23 +1,25 @@
-# Headers <Badge type="tip" text="New" />
+> 🌐 本文档由 [axios/axios](https://github.com/axios/axios) 翻译,英文原版见原项目。
 
-Axios exposes its own AxiosHeaders class to manipulate headers using a Map-like API that guarantees case-insensitive keys. This class is used internally by Axios to manage headers, but it's also exposed to the user for convenience. Although HTTP headers are case-insensitive, Axios will retain the case of the original header for stylistic reasons and for a workaround when servers mistakenly consider the header's case. The old method of directly manipulating the headers object is still available, but deprecated and not recommended for future usage.
+# 请求头(Headers)<Badge type="tip" text="New" />
 
-## Working with headers
+Axios 提供了自己的 AxiosHeaders 类,通过类 Map 的 API 操作请求头,保证键名不区分大小写。Axios 内部使用这个类管理请求头,同时也把它暴露给用户以便使用。虽然 HTTP 请求头本身不区分大小写,但出于风格考虑,以及作为对错误区分请求头大小写的服务器的规避手段,Axios 会保留原始请求头的大小写。直接操作 headers 对象的旧方法仍然可用,但已废弃,不建议在新代码中使用。
 
-The AxiosHeaders object instance can contain different types of internal values that control the setting and merging logic. The final headers object is obtained by Axios by calling the toJSON method. The AxiosHeaders object is also iterable, so you can use it in loops or convert it to an array or object.
+## 操作请求头
 
-The header values can be one of the following types:
+AxiosHeaders 对象实例可以包含不同类型的内部值,用于控制设置与合并逻辑。最终的 headers 对象由 Axios 调用 toJSON 方法获得。AxiosHeaders 对象也是可迭代的,因此可以在循环中使用它,或将其转换为数组或对象。
 
-- `string` - normal string value that will be sent to the server
-- `null` - skip header when converting to JSON
-- `false` - skip header when converting to JSON, additionally indicates that set method must be called with rewrite option set to true to overwrite this value (Axios uses this internally to allow users to opt out of installing certain headers like User-Agent or Content-Type)
-- `undefined` - value is not set
+请求头的值可以是以下类型之一:
+
+- `string` - 将发送到服务器的普通字符串值
+- `null` - 转换为 JSON 时跳过该请求头
+- `false` - 转换为 JSON 时跳过该请求头,另外表示必须以 rewrite 选项为 true 调用 set 方法才能覆盖该值(Axios 内部用它允许用户选择不安装某些请求头,如 User-Agent 或 Content-Type)
+- `undefined` - 值未设置
 
 ::: warning
-The header value is considered set if it is not undefined.
+只要值不是 undefined,该请求头就视为已设置。
 :::
 
-The headers object is always initialized inside interceptors and transformers as seen in the following example:
+headers 对象总是在拦截器和转换器内部被初始化,如下例所示:
 
 ```js
 axios.interceptors.request.use((request: InternalAxiosRequestConfig) => {
@@ -40,7 +42,7 @@ axios.interceptors.request.use((request: InternalAxiosRequestConfig) => {
 });
 ```
 
-You can iterate over an AxiosHeaders using any iterable method, like for-of loop, forEach, or spread operator:
+你可以用任何可迭代方式遍历 AxiosHeaders,比如 for-of 循环、forEach 或展开运算符:
 
 ```js
 const headers = new AxiosHeaders({
@@ -58,9 +60,9 @@ for (const [header, value] of headers) {
 // baz 3
 ```
 
-## Setting headers on a request
+## 在请求上设置请求头
 
-The most common place to set headers is the `headers` option in your request config or instance config:
+设置请求头最常用的位置是请求配置或实例配置中的 `headers` 选项:
 
 ```js
 // On a single request
@@ -79,9 +81,9 @@ const api = axios.create({
 });
 ```
 
-## Preserving a specific header case
+## 保留特定的大小写形式
 
-Axios header names are case-insensitive, but `AxiosHeaders` keeps the case of the first matching key it sees. If you need a specific case for a server with non-standard case-sensitive behavior, define a case preset in defaults and then set values as usual.
+Axios 请求头名称不区分大小写,但 `AxiosHeaders` 会保留它看到的第一个匹配键的大小写。如果面对大小写敏感行为不合标准的服务器需要特定大小写,可以在 defaults 中定义大小写预设,然后照常设置值。
 
 ```js
 const api = axios.create();
@@ -99,7 +101,7 @@ await api.put(url, data, {
 });
 ```
 
-You can also do this with `AxiosHeaders` directly when composing headers:
+在组合请求头时也可以直接用 `AxiosHeaders` 完成:
 
 ```js
 import axios, { AxiosHeaders } from 'axios';
@@ -112,9 +114,9 @@ const headers = AxiosHeaders.concat(
 await axios.put(url, data, { headers });
 ```
 
-## Setting headers in an interceptor
+## 在拦截器中设置请求头
 
-Interceptors are the right place to attach dynamic headers like auth tokens, because the token may not be available when the instance is first created:
+拦截器是附加认证令牌等动态请求头的合适位置,因为令牌在实例首次创建时可能还不可用:
 
 ```js
 api.interceptors.request.use((config) => {
@@ -124,13 +126,13 @@ api.interceptors.request.use((config) => {
 });
 ```
 
-## Unicode header values
+## Unicode 请求头值
 
-`AxiosHeaders` preserves non-control Unicode characters in header values so request interceptors can transform them before the request is sent. CR/LF and other C0 control bytes are still stripped at set time to prevent header injection.
+`AxiosHeaders` 会保留请求头值中的非控制 Unicode 字符,因此请求拦截器可以在请求发出前对其进行转换。CR/LF 及其他 C0 控制字节仍会在设置时被剔除,以防请求头注入。
 
-Adapters sanitize header values to byte-safe (HT, printable ASCII, and Latin-1 supplement) right before handing them to the platform — Node's `http.request`, the browser's `XMLHttpRequest.setRequestHeader`, and `fetch`'s `Headers`. If a header value contains characters outside that range and you have not encoded it, those characters are stripped, which can produce an empty value on the wire.
+适配器会在把请求头交给底层平台——Node 的 `http.request`、浏览器的 `XMLHttpRequest.setRequestHeader`、`fetch` 的 `Headers`——之前,将其净化为字节安全的字符(HT、可打印 ASCII 和 Latin-1 补充区)。如果请求头值包含超出该范围的字符且你没有自行编码,这些字符会被剔除,可能导致线上出现空值。
 
-If you need to send non-ASCII data in a header, encode it in a request interceptor:
+如果需要在请求头中发送非 ASCII 数据,请在请求拦截器中编码:
 
 ```js
 api.interceptors.request.use((config) => {
@@ -148,9 +150,9 @@ await api.get('/api/data', {
 // → request is sent with X-Name: %E8%AF%B7%E6%B1%82%E7%94%A8%E6%88%B7
 ```
 
-## Reading response headers
+## 读取响应头
 
-Response headers are available on `response.headers` as an `AxiosHeaders` instance. All header names are lower-cased:
+响应头以 `AxiosHeaders` 实例的形式位于 `response.headers` 上。所有请求头名称都是小写:
 
 ```js
 const response = await axios.get('/api/data');
@@ -162,9 +164,9 @@ console.log(response.headers.get('x-request-id'));
 // abc123
 ```
 
-## Removing a default header
+## 移除默认请求头
 
-To opt out of a header that axios sets by default (such as `Content-Type` or `User-Agent`), set its value to `false`:
+要停用 axios 默认设置的某个请求头(如 `Content-Type` 或 `User-Agent`),把它的值设为 `false`:
 
 ```js
 await axios.post('/api/data', payload, {
@@ -174,4 +176,4 @@ await axios.post('/api/data', payload, {
 });
 ```
 
-For more detail on the full `AxiosHeaders` method API, see the [Header methods](/pages/advanced/header-methods) page.
+关于 `AxiosHeaders` 完整方法 API 的更多细节,见[请求头方法](/pages/advanced/header-methods)页面。
